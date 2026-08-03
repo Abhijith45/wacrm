@@ -1,5 +1,3 @@
-import { redirect } from 'next/navigation'
+import Homepage from "./(marketing)/page";
 
-export default function RootPage() {
-  redirect('/dashboard')
-}
+export default Homepage;

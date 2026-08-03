@@ -15,7 +15,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { MessageSquare, UsersRound } from "lucide-react";
+import { MessageSquare, UsersRound, Eye, EyeOff, Check } from "lucide-react";
+import { BrowserFrame } from "@/components/marketing/browser-frame";
+import { DashboardMockup } from "@/components/marketing/screen-mockups";
+import { cn } from "@/lib/utils";
 
 // `useSearchParams` opts the component out of static prerendering
 // unless it sits under a Suspense boundary. We split the form into
@@ -40,6 +43,7 @@ function LoginPageInner() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
@@ -75,95 +79,204 @@ function LoginPageInner() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md border-border bg-card">
-        <CardHeader className="items-center text-center">
-          <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-            {inviteToken ? (
-              <UsersRound className="h-6 w-6 text-primary" />
-            ) : (
-              <MessageSquare className="h-6 w-6 text-primary" />
-            )}
+    <div className="flex min-h-screen w-full bg-background overflow-hidden font-sans selection:bg-primary/20">
+      {/* Left Brand Panel: Hidden on mobile/tablet, flex on desktop */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-card/30 via-background to-background border-r border-border p-12 flex-col justify-between relative overflow-hidden">
+        {/* Subtle background glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,oklch(0.526_0.247_293_/_0.08),transparent_50%)] pointer-events-none" />
+        
+        {/* Top: Logo & Welcome */}
+        <div className="space-y-6 relative z-10">
+          <Link href="/" className="inline-flex items-center space-x-2">
+            <img
+              src="/syncwa-logo-no-bg.png"
+              alt="SyncWA Logo"
+              className="h-8 w-auto object-contain"
+            />
+          </Link>
+          <div className="space-y-3">
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+              Welcome Back to SyncWA
+            </h1>
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-md">
+              Manage customer conversations, sales, marketing, and team collaboration from one unified platform.
+            </p>
           </div>
-          <CardTitle className="text-xl text-foreground">
-            {inviteToken ? t('titleAccept') : t('titleWelcome')}
-          </CardTitle>
-          <CardDescription className="text-muted-foreground">
-            {inviteToken
-              ? t('descAccept')
-              : t('descWelcome')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin} className="flex flex-col gap-4">
-            {error && (
-              <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-                {error}
-              </div>
-            )}
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="text-muted-foreground">
-                {t('emailLabel')}
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder={t('emailPlaceholder')}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20"
-              />
+          
+          {/* Features Highlights */}
+          <div className="grid grid-cols-2 gap-3 text-xs text-foreground/90 font-medium">
+            <div className="flex items-center space-x-2">
+              <Check className="h-4 w-4 text-primary shrink-0" />
+              <span>Shared Inbox</span>
             </div>
+            <div className="flex items-center space-x-2">
+              <Check className="h-4 w-4 text-primary shrink-0" />
+              <span>CRM</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Check className="h-4 w-4 text-primary shrink-0" />
+              <span>Automation</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Check className="h-4 w-4 text-primary shrink-0" />
+              <span>Analytics</span>
+            </div>
+          </div>
+        </div>
 
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-muted-foreground">
-                  {t('passwordLabel')}
-                </Label>
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-primary hover:text-primary/80"
+        {/* Bottom: Large Dashboard Preview */}
+        <div className="w-full relative z-10 pt-8 mt-auto">
+          <BrowserFrame url="app.syncwa.com/dashboard">
+            <DashboardMockup />
+          </BrowserFrame>
+        </div>
+      </div>
+
+      {/* Right Login Form Panel */}
+      <div className="flex-1 flex flex-col justify-center items-center px-4 py-12 lg:px-8 relative bg-card/10">
+        <div className="w-full max-w-sm space-y-6">
+          {/* Mobile logo header */}
+          <div className="lg:hidden flex flex-col items-center text-center space-y-4">
+            <img
+              src="/syncwa-logo-no-bg.png"
+              alt="SyncWA Logo"
+              className="h-10 w-auto object-contain"
+            />
+            <div className="space-y-1">
+              <h2 className="text-xl font-bold text-foreground">Welcome Back to SyncWA</h2>
+              <p className="text-xs text-muted-foreground">Manage customer conversations, sales, and automation.</p>
+            </div>
+          </div>
+
+          <Card className="border-border bg-card shadow-sm">
+            <CardHeader className="space-y-1 text-center sm:text-left">
+              <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 mx-auto sm:mx-0">
+                {inviteToken ? (
+                  <UsersRound className="h-4.5 w-4.5 text-primary" />
+                ) : (
+                  <MessageSquare className="h-4.5 w-4.5 text-primary" />
+                )}
+              </div>
+              <CardTitle className="text-xl text-foreground font-bold">
+                {inviteToken ? t('titleAccept') : t('titleWelcome')}
+              </CardTitle>
+              <CardDescription className="text-xs text-muted-foreground leading-normal">
+                {inviteToken ? t('descAccept') : t('descWelcome')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleLogin} className="space-y-4">
+                {error && (
+                  <div className="rounded-lg border border-destructive/20 bg-destructive/10 px-3.5 py-2.5 text-xs text-destructive-foreground">
+                    {error}
+                  </div>
+                )}
+
+                {/* Email Input */}
+                <div className="space-y-1.5">
+                  <Label htmlFor="email" className="text-xs font-semibold text-foreground/90">
+                    {t('emailLabel')}
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder={t('emailPlaceholder')}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="h-9 text-xs border-border bg-muted/30 text-foreground placeholder:text-muted-foreground/60 focus-visible:border-primary focus-visible:ring-primary/20"
+                  />
+                </div>
+
+                {/* Password Input */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password" className="text-xs font-semibold text-foreground/90">
+                      {t('passwordLabel')}
+                    </Label>
+                    <Link
+                      href="/forgot-password"
+                      className="text-xs font-medium text-primary hover:underline"
+                    >
+                      {t('forgotPassword')}
+                    </Link>
+                  </div>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="current-password"
+                      placeholder={t('passwordPlaceholder')}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="h-9 text-xs pr-10 border-border bg-muted/30 text-foreground placeholder:text-muted-foreground/60 focus-visible:border-primary focus-visible:ring-primary/20"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer focus:outline-none"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="h-9 w-full bg-primary text-primary-foreground hover:bg-primary/95 text-xs font-semibold transition-all shadow-sm cursor-pointer"
                 >
-                  {t('forgotPassword')}
-                </Link>
+                  {loading ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                      <span>{t('signingIn')}</span>
+                    </div>
+                  ) : (
+                    <span>{t('signIn')}</span>
+                  )}
+                </Button>
+              </form>
+
+              {/* Divider: or */}
+              <div className="relative flex py-4 items-center">
+                <div className="flex-grow border-t border-border/60"></div>
+                <span className="flex-shrink mx-3 text-[10px] text-muted-foreground uppercase font-semibold select-none">
+                  or
+                </span>
+                <div className="flex-grow border-t border-border/60"></div>
               </div>
-              <Input
-                id="password"
-                type="password"
-                placeholder={t('passwordPlaceholder')}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="border-border bg-muted text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary/20"
-              />
-            </div>
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className="mt-2 h-10 w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-            >
-              {loading ? t('signingIn') : t('signIn')}
-            </Button>
-          </form>
-
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            {t('noAccount')}{" "}
-            <Link
-              href={
-                inviteToken
-                  ? `/signup?invite=${encodeURIComponent(inviteToken)}`
-                  : "/signup"
-              }
-              className="text-primary hover:text-primary/80"
-            >
-              {t('createAccount')}
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
+              {/* Footer text */}
+              <p className="text-center text-xs text-muted-foreground">
+                {t('noAccount')}{" "}
+                <Link
+                  href={
+                    inviteToken
+                      ? `/signup?invite=${encodeURIComponent(inviteToken)}`
+                      : "/signup"
+                  }
+                  className="text-primary font-semibold hover:underline"
+                >
+                  {t('createAccount')}
+                </Link>
+              </p>
+            </CardContent>
+          </Card>
+          
+          {/* Subtle footer links */}
+          <div className="flex items-center justify-center space-x-4 text-[10px] text-muted-foreground/80">
+            <Link href="#" className="hover:underline">Privacy Policy</Link>
+            <span>•</span>
+            <Link href="#" className="hover:underline">Terms of Service</Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
