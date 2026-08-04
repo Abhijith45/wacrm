@@ -1,9 +1,9 @@
 # SyncWA Website Strategy Document
 
-Version: 1.0  
+Version: 1.2  
 Status: Source of Truth  
 Owner: Product, Brand, Website, and Growth Strategy  
-Last Updated: 2026-08-03  
+Last Updated: 2026-08-04  
 Primary Audience: Founders, product managers, designers, developers, marketers, sales teams, support teams, and investors
 
 ---
@@ -24,7 +24,7 @@ Primary Audience: Founders, product managers, designers, developers, marketers, 
 12. [Competitive Positioning](#12-competitive-positioning)
 13. [Customer Personas](#13-customer-personas)
 14. [Customer Problems](#14-customer-problems)
-15. [Customer Journey](#15-customer-journey)
+15. [Customer Lifecycle](#15-customer-lifecycle)
 16. [Core Value Proposition](#16-core-value-proposition)
 17. [Product Pillars](#17-product-pillars)
 18. [Verified Product Capability Ledger](#18-verified-product-capability-ledger)
@@ -54,7 +54,11 @@ Primary Audience: Founders, product managers, designers, developers, marketers, 
 42. [Risk and Claims Management](#42-risk-and-claims-management)
 43. [Decision Records](#43-decision-records)
 44. [Strategic Recommendations](#44-strategic-recommendations)
-45. [Appendices](#45-appendices)
+45. [SaaS Platform Architecture Strategy](#45-saas-platform-architecture-strategy)
+46. [Multi-Tenant and Workspace Strategy](#46-multi-tenant-and-workspace-strategy)
+47. [Platform Domains](#47-platform-domains)
+48. [Architecture Principles](#48-architecture-principles)
+49. [Appendices](#49-appendices)
 
 ---
 
@@ -93,6 +97,14 @@ This document covers:
 - Trust and proof strategy.
 - Website objectives and page strategy.
 - Navigation, CTAs, content, SEO, visual, and writing guidelines.
+- Product ecosystem: Marketing Website, Customer CRM, and Platform CRM.
+- Multi-tenant SaaS model, workspace strategy, and customer data isolation.
+- Platform roles and workspace roles.
+- Official customer lifecycle.
+- MVP architecture strategy and future platform architecture.
+- Legal pages as mandatory public website surfaces.
+- Official Platform Domains and modularization strategy.
+- Engineering database architecture principles.
 - Future website and product expansion.
 - Governance, versioning, and claims management.
 - Strategic recommendations.
@@ -1252,39 +1264,78 @@ Business message:
 
 ---
 
-## 15. Customer Journey
+## 15. Customer Lifecycle
 
-The website should support a customer from first awareness through evaluation, conversion, onboarding, adoption, expansion, and advocacy.
+The official SyncWA SaaS customer lifecycle reflects the complete journey from initial website discovery through long-term advocacy. The website, Platform CRM, and Customer CRM each play specific roles at different stages of this journey.
 
-### 15.1 Journey Map
+### 15.1 Official Lifecycle and Onboarding Strategy
+
+Platform Lead Management is the highest priority Platform CRM capability. Every enquiry submitted from the public website contact forms is captured as a Platform Lead. The official customer acquisition and onboarding strategy progresses through the following flow:
+
+```text
+Platform Lead
+      │
+      ▼
+Sales Qualification (Sales Follow-up)
+      │
+      ▼
+Demo (Live Walkthrough)
+      │
+      ▼
+Trial Workspace Provisioned
+      │
+      ▼
+Customer Workspace Activated (Payment/Workspace Creation)
+      │
+      ▼
+Daily CRM Usage (Onboarding Completed)
+```
+
+The full lifecycle, mapping visitor progression to platform operation, is structured as follows:
 
 ```text
 Visitor
-  |
-  v
-Problem Recognition
-  |
-  v
-Product Understanding
-  |
-  v
-Trust Building
-  |
-  v
-Conversion
-  |
-  v
-Onboarding
-  |
-  v
-Adoption
-  |
-  v
+  │
+  ▼
+Marketing Website
+  │
+  ▼
+Contact / Demo Request
+  │
+  ▼
+Platform Lead (Highest Priority CRM Entry Point)
+  │
+  ▼
+Sales Follow-up & Qualification
+  │
+  ▼
+Demo
+  │
+  ▼
+Trial Workspace
+  │
+  ▼
+Payment & Subscription
+  │
+  ▼
+Workspace Creation (accounts table)
+  │
+  ▼
+Workspace Owner & Team Invited (profiles table)
+  │
+  ▼
+Daily CRM Usage
+  │
+  ▼
 Expansion
-  |
-  v
+  │
+  ▼
+Renewal
+  │
+  ▼
 Advocacy
 ```
+
 
 ### 15.2 Stage 1: Visitor
 
@@ -1307,7 +1358,7 @@ Success criteria:
 
 - Visitor understands the category within 15 seconds.
 
-### 15.3 Stage 2: Problem Recognition
+### 15.3 Stage 2: Contact and Demo Request
 
 Customer question:
 
@@ -1317,120 +1368,87 @@ Website answer:
 
 - If your team manages customer conversations, sales, campaigns, and follow-up through WhatsApp, SyncWA gives you one workspace to keep it organized.
 
-Customer needs:
+Customer action:
 
-- Problem/impact/solution blocks.
-- Before and after workflow.
-- Role-specific examples.
+- Visitor submits the Contact form or requests a demo. This submission creates a Platform Lead inside the Platform CRM for the SyncWA team to manage.
 
 Success criteria:
 
-- Visitor recognizes their current pain in the website narrative.
+- Visitor takes a measurable action on the website.
 
-### 15.4 Stage 3: Product Understanding
+### 15.4 Stage 3: Platform Lead and Sales Qualification
+
+Ownership:
+
+- Platform CRM (Owner Portal).
+
+What happens:
+
+- The enquiry is captured as a Platform Lead.
+- A SyncWA team member reviews the lead, qualifies interest, and schedules a demo.
+- Lead context such as company size, WhatsApp usage, and interest area is recorded.
+
+Success criteria:
+
+- Lead is qualified and moves to demo stage.
+
+### 15.5 Stage 4: Demo
 
 Customer question:
 
 - What does SyncWA actually do?
 
-Website answer:
+Answer:
 
 - It brings inbox, CRM, sales pipelines, broadcasts, automations, AI, analytics, and team collaboration together.
 
-Customer needs:
-
-- Feature pillars.
-- Screenshots.
-- Workflow diagrams.
-- Clear feature grouping.
-
 Success criteria:
 
-- Visitor can describe the product to a colleague.
+- Customer can describe the product to a colleague and is ready to evaluate.
 
-### 15.5 Stage 4: Trust Building
+### 15.6 Stage 5: Trial
 
 Customer question:
 
-- Can I trust this with customer communication?
-
-Website answer:
-
-- SyncWA uses official WhatsApp Business connection, role-based access, controlled AI handoff, delivery tracking, team visibility, and secure account management.
-
-Customer needs:
-
-- Trust section.
-- Security page later.
-- FAQ.
-- Transparent feature status.
-
-Success criteria:
-
-- Visitor has fewer perceived risks and is ready to take action.
-
-### 15.6 Stage 5: Conversion
-
-Customer question:
-
-- What should I do next?
-
-Website answer:
-
-- Start trial, book demo, or contact sales depending on segment and buying motion.
-
-Customer needs:
-
-- Clear CTAs.
-- Pricing page.
-- Contact form.
-- Demo request.
-
-Success criteria:
-
-- Visitor takes a measurable action.
-
-### 15.7 Stage 6: Onboarding
-
-Customer question:
-
-- How do we begin using this?
-
-Website and app answer:
-
-- Create workspace, connect WhatsApp Business, import contacts, invite team, configure templates, start handling conversations.
-
-Customer needs:
-
-- In-app onboarding.
-- Setup checklist.
-- Help center articles.
-- Support path.
-
-Success criteria:
-
-- Workspace reaches first successful customer conversation.
-
-### 15.8 Stage 7: Adoption
-
-Customer question:
-
-- How do we make this part of daily work?
+- How does it work for our team?
 
 Product answer:
 
-- Team uses inbox, contacts, pipelines, campaigns, automations, and dashboard regularly.
-
-Customer needs:
-
-- Training content.
-- Workflow templates.
-- Best practice guides.
-- Reporting.
+- Trial workspace is created. Team connects WhatsApp Business, imports contacts, configures templates, and begins managing conversations.
 
 Success criteria:
 
-- Team uses SyncWA as the primary customer workspace.
+- Workspace reaches first successful customer conversation within the trial period.
+
+### 15.7 Stage 6: Payment and Subscription
+
+Ownership:
+
+- Platform CRM (subscription management).
+
+What happens:
+
+- Customer selects a plan.
+- Payment is confirmed and workspace subscription is activated.
+- Workspace is formally onboarded.
+
+Success criteria:
+
+- Customer transitions from trial to active subscriber.
+
+### 15.8 Stage 7: Workspace Creation and Onboarding
+
+Customer question:
+
+- How do we begin using this at scale?
+
+Product and team answer:
+
+- Workspace is configured. Team members are invited. Roles are assigned. WhatsApp connection is confirmed. Templates are approved. First workflows are activated.
+
+Success criteria:
+
+- Team is operational and using SyncWA as the primary customer workspace.
 
 ### 15.9 Stage 8: Expansion
 
@@ -1440,20 +1458,27 @@ Customer question:
 
 Product answer:
 
-- Expand from communication into sales, marketing, automation, analytics, and future modules.
-
-Customer needs:
-
-- Advanced feature education.
-- Integrations.
-- API docs.
-- Enterprise or higher-tier plan.
+- Expand from communication into sales, marketing, automation, analytics, and future modules. Higher-tier plans unlock advanced capabilities.
 
 Success criteria:
 
-- Account expands usage and dependence on SyncWA.
+- Account expands usage, module adoption, or team size.
 
-### 15.10 Stage 9: Advocacy
+### 15.10 Stage 9: Renewal
+
+Ownership:
+
+- Platform CRM (renewal management and customer success).
+
+What happens:
+
+- Subscription renewal is tracked in the Platform CRM. Customer success review is conducted. Pricing is confirmed for the next period.
+
+Success criteria:
+
+- Customer renews subscription with maintained or expanded scope.
+
+### 15.11 Stage 10: Advocacy
 
 Customer question:
 
@@ -1461,7 +1486,7 @@ Customer question:
 
 Business answer:
 
-- SyncWA should produce enough clarity, operational improvement, and trust that customers become references.
+- SyncWA should produce enough clarity, operational improvement, and trust that customers become references and referrals.
 
 Customer needs:
 
@@ -1855,9 +1880,119 @@ The following should only appear as future vision unless implemented later:
 
 ## 19. Product Ecosystem
 
-SyncWA should be communicated as an ecosystem of connected modules, not as isolated tools.
+SyncWA is not a single application. It is an ecosystem of three distinct applications that work together to operate a SaaS business and deliver value to customers. Each application has a specific purpose, audience, and domain.
 
-### 19.1 Ecosystem Map
+### 19.1 Application 1: Marketing Website
+
+Purpose:
+
+The Marketing Website is the public product discovery and lead generation surface. It educates potential customers, communicates product value, explains pricing, provides legal documentation, and routes qualified visitors toward signup, demo requests, and sales conversations.
+
+Responsibilities:
+
+- Product discovery and brand awareness.
+- SEO and organic traffic.
+- Feature education.
+- Pricing communication.
+- Contact and lead capture.
+- Legal pages: Privacy Policy and Terms of Service.
+- Future: Blog, documentation, help center, API docs, integrations, customer stories, security page, release notes, careers.
+
+Future Domain:
+
+> syncwa.com
+
+### 19.2 Application 2: Customer CRM
+
+Purpose:
+
+The Customer CRM is the daily operational workspace used by paying customers. This is the application that customers log in to, invite their teams to, and use to manage their WhatsApp-led business operations.
+
+Includes:
+
+- Dashboard.
+- Shared inbox.
+- CRM and contacts.
+- Sales pipelines.
+- Broadcast campaigns.
+- Automations and visual flows.
+- AI assistance.
+- Analytics.
+- Team collaboration.
+- Workspace settings.
+- Public REST API and webhooks.
+
+Future Domain:
+
+> app.syncwa.com
+
+### 19.3 Application 3: Platform CRM (Owner Portal)
+
+Purpose:
+
+The Platform CRM is the internal operational workspace used exclusively by SyncWA employees to operate the SaaS business itself.
+
+This application is not available to customers. Customers never access it and it does not appear in any public marketing. It is the administrative backbone of the SyncWA business.
+
+Responsibilities:
+
+- Customer management.
+- Lead management and sales pipeline.
+- Customer onboarding.
+- Workspace provisioning and activation.
+- Subscription management.
+- Billing and payment tracking.
+- Receipts and invoicing.
+- Customer support.
+- Customer success.
+- Platform analytics.
+- Workspace administration.
+
+Future Deployment Vision:
+
+Eventually, the Platform CRM will become an independently deployable application running on its own dedicated administrative domain:
+
+> admin.syncwa.com
+
+However, during Phase 1 (MVP), to minimize deployment and operational complexity, the Platform CRM is embedded within the unified Next.js codebase. It is hosted on the same infrastructure as the Customer CRM, isolated under the dedicated `(admin)` route group. This architecture facilitates rapid development and shared auth primitives, while ensuring a clean separation of concerns for future micro-frontend or microservice extraction.
+
+### 19.4 Platform Hierarchy
+
+The official platform hierarchy governs how entities relate within the SyncWA platform:
+
+```text
+Platform
+  |
+  v
+Workspace
+  |
+  v
+Users
+  |
+  v
+Customers
+  |
+  v
+Conversations
+  |
+  v
+Sales
+  |
+  v
+Marketing
+  |
+  v
+Automation
+  |
+  v
+Analytics
+```
+
+Every entity in SyncWA belongs to a workspace. The platform manages workspaces. Workspaces manage users. Users serve customers. This hierarchy is the foundation for all future product evolution.
+
+### 19.5 Module Ecosystem Map
+
+Within the Customer CRM, modules connect to create an integrated business platform:
 
 ```text
                          Analytics
@@ -1878,13 +2013,13 @@ Automations and Visual Flows
 Handoffs, Tags, Assignments, Webhooks
 ```
 
-### 19.2 Ecosystem Story
+### 19.6 Ecosystem Story
 
 The customer sends a WhatsApp message. SyncWA records the conversation, associates it with a contact, applies context through tags and fields, routes or automates the workflow, helps the team reply, creates a sales opportunity when needed, includes the customer in relevant campaigns, and tracks the results in analytics.
 
 That ecosystem is the product advantage.
 
-### 19.3 Module Relationship Principles
+### 19.7 Module Relationship Principles
 
 - Communication feeds CRM.
 - CRM powers segmentation.
@@ -2043,17 +2178,49 @@ Measure:
 
 ### 22.1 Current Public Website Scope
 
-The current public website scope should include:
+The current public website scope includes:
 
 - Home.
 - Features.
 - Pricing.
 - Contact.
 - Login.
+- Privacy Policy.
+- Terms of Service.
 
-The current application includes login/signup and dashboard routes, but public marketing routes are not verified in the codebase. This strategy defines what those pages should become.
+Privacy Policy and Terms of Service are mandatory public pages for any commercial SaaS collecting customer data. They are not marketing pages. They are trust infrastructure required for business credibility and legal compliance.
 
-### 22.2 Future Website Scope
+### 22.2 Official Website Conversion Funnel
+
+Every public page serves a unique purpose in the visitor conversion journey. Pages are not interchangeable. Each one answers a different customer question and moves the visitor closer to becoming a customer.
+
+```text
+Home
+  |
+  v
+Features
+  |
+  v
+Pricing
+  |
+  v
+Contact
+  |
+  v
+Login
+```
+
+Visitors naturally move through this funnel as their confidence in the product grows. The website information architecture should reinforce this path at every stage.
+
+| Page | Customer Question |
+|---|---|
+| Home | What is SyncWA and why does it matter? |
+| Features | What can SyncWA actually do? |
+| Pricing | What does it cost and does it fit my budget? |
+| Contact | How do I start a conversation with the team? |
+| Login | How do I access my workspace? |
+
+### 22.3 Future Website Scope
 
 Future pages may include:
 
@@ -2067,7 +2234,7 @@ Future pages may include:
 - Security.
 - Careers.
 
-### 22.3 Recommended Primary IA
+### 22.4 Recommended Primary IA
 
 ```text
 Home
@@ -2098,7 +2265,7 @@ Login
 Primary CTA: Start Free Trial or Book Demo
 ```
 
-### 22.4 IA Principles
+### 22.5 IA Principles
 
 - Keep top navigation short.
 - Lead with customer value pages, not technical documentation.
@@ -2106,16 +2273,19 @@ Primary CTA: Start Free Trial or Book Demo
 - Do not expose internal implementation pages as public marketing hierarchy.
 - Keep "Resources" broad enough for future content.
 - Keep "Company" optional until customer proof and hiring pages exist.
+- Legal pages belong in the footer, not in primary navigation.
 
-### 22.5 Page Roles
+### 22.6 Page Roles
 
 | Page | Role |
 |---|---|
-| Home | Explain product, value, trust, and primary action quickly. |
-| Features | Help buyers understand capability depth by business function. |
+| Home | Introduce, build curiosity, and route visitors deeper into the funnel. |
+| Features | Answer what SyncWA actually does. Serve as the definitive product guide. |
 | Pricing | Set commercial expectations and route visitors to signup or sales. |
-| Contact | Capture qualified sales, support, partnership, and enterprise inquiries. |
-| Login | Provide clean account access without marketing distraction. |
+| Contact | Capture qualified enquiries as Platform Leads for the SyncWA team. |
+| Login | Provide clean workspace access without marketing distraction. |
+| Privacy Policy | Explain how customer data is handled. Required for trust and legal compliance. |
+| Terms of Service | Define the commercial relationship between SyncWA and its customers. |
 | Documentation | Help customers and integrators use the product. |
 | API Docs | Serve technical integrators. |
 | Blog | Educate market and support search growth. |
@@ -2199,19 +2369,27 @@ Legal pages are important for a commercial SaaS and should be created before pub
 
 ## 24. Homepage Strategy
 
-The homepage should be product-first, screenshot-driven, concise, and organized around the sequence:
+The homepage is responsible for introducing SyncWA, building visitor curiosity, establishing trust, and generating the primary conversion action. It is not the product guide. The Features page serves that purpose.
+
+The homepage should leave visitors with three clear answers: what SyncWA is, whether it is relevant to them, and what to do next.
 
 ```text
-Problem
+Hero
   |
   v
-Business Impact
+Problems We Solve
   |
   v
-Solution
+How SyncWA Works
   |
   v
-Screenshot
+Core Highlights
+  |
+  v
+Product Preview
+  |
+  v
+Trust
   |
   v
 CTA
@@ -2226,6 +2404,8 @@ The homepage must answer:
 - What problems does it solve?
 - Why is it different?
 - What can I do next?
+
+The homepage should not attempt to explain every product capability. That responsibility belongs to the Features page.
 
 ### 24.2 Hero Section
 
@@ -2489,7 +2669,7 @@ Secondary CTA:
 
 ### 25.1 Features Page Objective
 
-The Features page should help serious evaluators understand product depth without reading technical documentation.
+The Features page is the definitive product guide. It serves as the authoritative answer to: "What can SyncWA actually do?"
 
 It should answer:
 
@@ -2499,22 +2679,51 @@ It should answer:
 - How do modules connect?
 - What is implemented today?
 
+The Features page should not repeat the introductory messaging that belongs on the Homepage. Visitors arriving on the Features page have already decided SyncWA is worth evaluating. They need depth, not persuasion.
+
 ### 25.2 Recommended Feature Page Structure
 
-1. Intro.
-2. Product ecosystem overview.
-3. Shared Inbox.
-4. CRM and Contacts.
-5. Sales Pipelines.
-6. Broadcast Campaigns.
-7. Automations.
-8. Visual Flows.
-9. AI Assistance.
-10. Analytics.
-11. Team and Workspace Control.
-12. Integrations and API.
-13. Feature status notes.
-14. CTA.
+```text
+Hero
+  |
+  v
+Sticky Feature Navigation
+  |
+  v
+Business Workflow
+  |
+  v
+Communication
+  |
+  v
+CRM
+  |
+  v
+Sales
+  |
+  v
+Marketing
+  |
+  v
+Automation
+  |
+  v
+Analytics
+  |
+  v
+Security and Administration
+  |
+  v
+Integrations
+  |
+  v
+Feature-Specific FAQ
+  |
+  v
+CTA
+```
+
+The Sticky Feature Navigation allows visitors to jump directly to the capability area they are evaluating. It should remain visible as the user scrolls.
 
 ### 25.3 Shared Inbox Section
 
@@ -2893,20 +3102,51 @@ Recommended FAQ:
 
 ### 27.1 Contact Page Objective
 
-The Contact page should route prospects, customers, partners, and enterprise buyers to the right next step.
+The Contact page transforms website visitors into business opportunities. Every enquiry submitted through the Contact page creates a Platform Lead inside the Platform CRM. This is not simply an email notification. It is the beginning of the formal sales and customer success process managed by the SyncWA team.
 
-### 27.2 Contact Paths
+The contact form is the bridge between the public Marketing Website and the internal Platform CRM.
+
+### 27.2 Contact-to-Customer Flow
+
+```text
+Visitor
+  |
+  v
+Contact Form
+  |
+  v
+Platform Lead
+  |
+  v
+Owner Portal
+  |
+  v
+Sales Qualification
+  |
+  v
+Demo
+  |
+  v
+Trial
+  |
+  v
+Customer
+```
+
+Every field on the Contact form contributes to lead qualification. The richer the lead data, the more effectively the SyncWA team can prepare for the conversation.
+
+### 27.3 Contact Paths
 
 Recommended paths:
 
 - Sales inquiry.
 - Book a demo.
 - Support request.
-- Partnership/integration inquiry.
-- Enterprise/security inquiry.
+- Partnership or integration inquiry.
+- Enterprise or security inquiry.
 - General contact.
 
-### 27.3 Contact Form Fields
+### 27.4 Contact Form Fields
 
 Recommended fields:
 
@@ -2915,7 +3155,7 @@ Recommended fields:
 - Company.
 - Role.
 - Team size.
-- Country/region.
+- Country or region.
 - Current WhatsApp usage.
 - Interest area.
 - Message.
@@ -2927,12 +3167,12 @@ Interest area options:
 - Campaigns.
 - Automations.
 - AI.
-- Integrations/API.
-- Enterprise/security.
+- Integrations and API.
+- Enterprise or security.
 - Pricing.
 - Other.
 
-### 27.4 Contact Page Messaging
+### 27.5 Contact Page Messaging
 
 Recommended headline:
 
@@ -2942,7 +3182,7 @@ Recommended supporting copy:
 
 > Whether you are organizing customer conversations, improving follow-up, or planning automation, we can help you understand how SyncWA fits your team.
 
-### 27.5 Sales Qualification Questions
+### 27.6 Sales Qualification Questions
 
 Useful questions for follow-up:
 
@@ -2952,20 +3192,21 @@ Useful questions for follow-up:
 - Do you need sales pipelines, campaigns, automation, or AI?
 - Which tools do you need SyncWA to connect with?
 
-### 27.6 Contact Page Trust Elements
+### 27.7 Contact Page Trust Elements
 
 Include:
 
 - Response expectation.
 - Business email.
 - Optional calendar booking.
-- Enterprise/security note.
+- Enterprise or security note.
 - Links to pricing and features.
 
 Avoid:
 
 - Publishing personal phone numbers unless operationally supported.
 - Claiming 24/7 support unless staffed.
+- Describing the Contact form as sending an email. It creates a Platform Lead.
 
 ---
 
@@ -3775,6 +4016,8 @@ Expansion should not dilute the core position:
 
 > A complete business platform built around WhatsApp.
 
+Each new page added to the website should have a clear owner, a defined purpose, and a measurable success criteria before it is published.
+
 ### 37.2 Documentation
 
 Future documentation should serve:
@@ -3841,14 +4084,14 @@ This is the correct place for technical detail.
 
 Future Integrations page should include:
 
-- CRM/ERP systems.
+- CRM and ERP systems.
 - Ecommerce platforms.
-- Sheets/spreadsheets.
+- Spreadsheets and data tools.
 - Webhook automation platforms.
 - Analytics tools.
 - AI assistants.
 
-Do not list integrations as supported until they exist or are supported through generic API/webhooks with clear language.
+Do not list integrations as supported until they exist or are supported through generic API and webhooks with clear language.
 
 ### 37.7 Customer Stories
 
@@ -3879,13 +4122,61 @@ Security page should explain:
 
 Avoid compliance claims without certification.
 
-### 37.9 Careers
+### 37.9 Release Notes
+
+Release Notes should track:
+
+- Product updates and new features.
+- Bug fixes that affect customer workflows.
+- Deprecations with clear migration guidance.
+- Version history organized by date.
+
+Release Notes build trust by showing that the product is actively maintained and improved.
+
+### 37.10 Careers
 
 Careers should exist only when there are real hiring needs or company-building content.
+
+### 37.11 Website Expansion Roadmap
+
+The following roadmap reflects the phased expansion of the SyncWA website. Pages are classified as Current, Coming Soon, or Future Vision.
+
+**Current:**
+
+- Home.
+- Features.
+- Pricing.
+- Contact.
+- Login.
+- Privacy Policy.
+- Terms of Service.
+
+**Coming Soon:**
+
+- Help Center.
+- API Docs.
+- Security page.
+- Release Notes.
+- Integrations overview.
+
+**Future Vision:**
+
+- Blog.
+- Use-case pages.
+- Customer Stories.
+- Comparison pages.
+- Documentation.
+- Enterprise content.
+- Partner and integration marketplace content.
+- Advanced product tours.
+- ROI and industry pages.
+- Careers.
 
 ---
 
 ## 38. Future Product Direction
+
+
 
 This chapter defines long-term product direction. These are not implemented claims.
 
@@ -4069,6 +4360,67 @@ Website treatment:
 
 - Future Direction.
 
+### 38.11 Future Direction: Platform CRM (Owner Portal)
+
+The Platform CRM is the internal SaaS management application used by SyncWA employees to operate the business. While foundational concepts are planned, the full-featured Platform CRM with all SaaS operational capabilities is a future build.
+
+Planned capabilities:
+
+- Customer management and sales pipeline.
+- Lead management and qualification.
+- Workspace provisioning and administration.
+- Subscription management and billing.
+- Payment tracking and receipts.
+- Customer success and renewal management.
+- Support case management.
+- Platform analytics.
+
+Strategic fit:
+
+- Enables SyncWA to operate as a professional SaaS business with internal structure, process, and visibility across all customer relationships.
+
+Development status:
+
+- Future Direction. Platform CRM is planned and architecturally anticipated in the current MVP route structure as the future `(admin)` route group.
+
+### 38.12 Future Direction: Subscription and Billing
+
+Planned capabilities:
+
+- Self-service plan selection.
+- Stripe or equivalent payment processing.
+- Subscription activation and plan enforcement.
+- Invoice generation and delivery.
+- Payment failure handling and dunning.
+- Plan upgrades and downgrades.
+
+Strategic fit:
+
+- Enables self-service commercial motion and reduces manual sales work for smaller customers.
+
+Development status:
+
+- Future Direction. Not implemented in the current codebase. Pricing page currently directs visitors to Contact Sales.
+
+### 38.13 Future Direction: Customer Success
+
+Planned capabilities:
+
+- Workspace health tracking.
+- Renewal reminders and risk signals.
+- Success milestones and onboarding completion tracking.
+- Satisfaction surveys.
+- Escalation management.
+- Customer success playbooks.
+
+Strategic fit:
+
+- Extends the Platform CRM from sales into ongoing relationship management and retention.
+
+Development status:
+
+- Future Direction. Part of the Platform CRM evolution.
+
 ---
 
 ## 39. Governance
@@ -4146,6 +4498,8 @@ Use semantic document versions:
 | Version | Date | Owner | Summary |
 |---|---|---|---|
 | 1.0 | 2026-08-03 | Product/Strategy | Initial complete SaaS website strategy document. |
+| 1.1 | 2026-08-04 | Product/Strategy | Integrated Platform CRM, Multi-Tenant strategy, official customer lifecycle, Platform Hierarchy, Platform Roles, Workspace Roles, Customer Data Privacy, MVP architecture strategy, SaaS Platform Architecture strategy, legal pages as mandatory surfaces, expanded future roadmap, updated Homepage and Features page differentiation, and Contact strategy evolved to Platform Lead generation. Added new strategic chapters 45 and 46. |
+| 1.2 | 2026-08-04 | Product/Strategy | Incorporated database architecture audit findings: mapped Workspace concepts to the existing `accounts` table and Workspace membership to `profiles.account_id/account_role` instead of describing redundant/parallel tables. Evolved the Platform CRM implementation roadmap into a modular, domain-based strategy (Website, Customer Management, Workspace, Subscription, Billing, Support, Analytics, Administration, Integration). Expanded MVP Philosophy and Future Platform Vision. Added chapters 47 (Platform Domains) and 48 (Architecture Principles). |
 
 ### 40.3 Product Claim Versioning
 
@@ -4665,7 +5019,372 @@ Expected business impact:
 
 ---
 
-## 45. Appendices
+## 45. SaaS Platform Architecture Strategy
+
+SyncWA is designed as a multi-application SaaS platform. The current state is a unified MVP. The long-term state is three independent applications sharing common infrastructure. Understanding both is essential for product, engineering, and business planning.
+
+### 45.1 Current MVP Architecture
+
+The current version of SyncWA is a single Next.js application that intentionally houses multiple distinct application concerns under one roof to enable faster development, simpler deployment, and shared authentication during the early product phase.
+
+Current route groups:
+
+```text
+(marketing)  →  Public-facing marketing website
+(auth)       →  Login, signup, and authentication flows
+(dashboard)  →  Customer CRM workspace
+(admin)      →  Future: Platform CRM (Owner Portal)
+```
+
+This architecture was chosen intentionally. It is not a technical limitation. It is a deliberate strategic decision that enables:
+
+- Faster MVP development.
+- Lower deployment complexity.
+- Shared authentication and session management.
+- Shared backend services and database access.
+- Easier maintenance and debugging.
+- Faster time to first paying customer.
+
+The current codebase organization mirrors the future platform separation. Each route group can be extracted into an independent application with minimal restructuring when scale and business needs justify it.
+
+### 45.2 Long-Term Platform Architecture
+
+The long-term vision for the SyncWA platform separates each application into an independent deployment while sharing common infrastructure:
+
+```text
+Marketing Website
+  |
+  v
+Customer CRM
+  |
+  v
+Platform CRM
+  |
+  v
+Shared Backend Services
+  |
+  v
+Shared Authentication
+  |
+  v
+Shared UI Library
+  |
+  v
+Shared Component System
+  |
+  v
+Shared Business Logic
+```
+
+Independent deployment will enable:
+
+- Scalability tailored to each application's usage pattern.
+- Independent release cycles without cross-application risk.
+- Safer deployments with isolated rollbacks.
+- Future microservices where applicable.
+- Easier maintenance as each team owns its surface.
+- Foundation for enterprise-grade operations.
+
+### 45.3 Application Separation Philosophy
+
+Each application in the SyncWA ecosystem has a distinct purpose, a distinct audience, and a distinct operational context. The strategic rationale for separation is not technical performance. It is organizational clarity.
+
+The Marketing Website has no reason to share a deployment footprint with the Customer CRM. The Platform CRM has no reason to be visible to customers. The Customer CRM has no reason to carry admin-only business logic. Separating these surfaces reduces accidental coupling and makes each application simpler to own, maintain, and extend.
+
+### 45.4 Shared Services Principles
+
+Shared services between applications should include:
+
+- Authentication and session management.
+- Core database access.
+- WhatsApp Business API integration.
+- AI provider integrations.
+- Webhook event system.
+- API key management.
+
+Shared services should not include:
+
+- Application-specific business logic.
+- Page rendering.
+- Marketing or editorial content.
+- Admin-only operations.
+
+### 45.5 Domain Strategy
+
+| Application | Current | Future Domain |
+|---|---|---|
+| Marketing Website | Embedded in app | syncwa.com |
+| Customer CRM | Current primary app | app.syncwa.com |
+| Platform CRM | Not yet deployed | admin.syncwa.com |
+
+Domain separation is a future milestone, not a current requirement.
+
+### 45.6 MVP Philosophy
+
+The development of the SyncWA SaaS Platform CRM prioritizes core business stability and initial customer acquisition over full feature-parity with mature platforms. SyncWA intentionally prioritizes the following capabilities:
+
+- **Customer Acquisition**: Qualifying and capturing leads via the Marketing Website.
+- **Workspace Provisioning**: Programmatically initializing workspaces and allocating database resources.
+- **Customer Onboarding**: Ensuring a fast time-to-value as customers connect WhatsApp and invite team members.
+- **Multi-Tenant Stability**: Guaranteeing customer data isolation and robust database performance.
+
+before implementing complex, secondary platform services such as:
+
+- **Subscription and Billing**: Automated Stripe gateways and self-service plans.
+- **Customer Support**: Ticket tracking and live admin help-desk utilities.
+- **Platform Analytics**: Aggregate telemetries, retention indices, and automated churn analysis.
+- **Marketplaces**: Prebuilt visual flows, automation recipe, and partner integration listings.
+- **Advanced Administration**: Fine-grained feature flag controls and deep system logs.
+
+By focusing Phase 1 strictly on acquisition and onboarding, we dramatically reduce initial codebase and database complexity. This allows the engineering team to optimize multi-tenant security and the customer onboarding experience, preserving a scalable and clean database architecture that will support more complex business domains in subsequent phases.
+
+---
+
+## 46. Multi-Tenant and Workspace Strategy
+
+SyncWA operates as a multi-tenant SaaS platform. Every customer receives their own isolated Workspace. This model is fundamental to how the product operates and how trust is maintained across all customers.
+
+### 46.1 The Workspace Concept
+
+A Workspace is the customer's private operational environment inside SyncWA. Every business that subscribes to SyncWA receives exactly one Workspace.
+
+**Database Mapping**:
+In the database, the Workspace concept maps directly to the `accounts` table. Throughout the code, database operations, and strategic planning, the business term **Workspace** represents this database entity (i.e., Workspace == `accounts`). We intentionally avoid introducing a new `workspaces` table in future phases; instead, the existing `accounts` entity will evolve over time by extending its schema with additional fields (e.g., status, trial details, subscription references, and onboarding status) to satisfy upcoming Platform CRM capabilities.
+
+Each Workspace owns:
+
+- Users and team members.
+- Contacts and customer records.
+- Conversations and message history.
+- Sales pipelines and deals.
+- Broadcast campaigns.
+- Automations and visual flows.
+- AI configuration and knowledge base.
+- Analytics and reporting data.
+- API keys and webhook subscriptions.
+- Workspace settings.
+
+No data from one Workspace is ever accessible by another Workspace. Customers operate in complete isolation from each other.
+
+### 46.2 Customer Isolation Principles
+
+Customer data isolation is a core product principle. It is not an implementation detail. It is a business commitment.
+
+- Every Workspace is isolated.
+- Customers only access their own Workspace data.
+- Teammates within a Workspace operate under defined roles.
+- Platform administrators manage subscriptions and onboarding but do not access customer conversation data or business records.
+- Privacy is foundational to product trust.
+
+### 46.3 Platform Roles
+
+Platform Roles control who can operate the SyncWA platform itself. These roles are used exclusively within the Platform CRM (Owner Portal) and are not visible to customers.
+
+**Independence of Roles**:
+Platform Roles and Workspace Roles are strictly independent. Platform Roles govern the administration and operation of the SyncWA SaaS platform itself (e.g., managing billing, support, and leads in the Platform CRM). Workspace Roles govern the business operations of a single customer's team (e.g., managing customer threads, broadcasts, and deals in the Customer CRM). Platform staff do not participate in workspace workflows, and customer users have no access to platform settings or database tables.
+
+| Platform Role | Responsibility |
+|---|---|
+| Founder | Full platform access and all business operations. |
+| Platform Admin | Workspace management, customer management, and platform configuration. |
+| Sales | Lead management, demos, trials, and customer acquisition. |
+| Support | Customer issue resolution, workspace troubleshooting, and escalation management. |
+| Finance | Billing, payments, receipts, and subscription tracking. |
+| Operations | Platform analytics, process management, and internal coordination. |
+
+Platform Roles are entirely separate from Workspace Roles. A Platform Admin does not have access to customer workspace data in the operational sense.
+
+### 46.4 Workspace Roles
+
+Workspace Roles control what team members of a customer business can do inside their Workspace.
+
+| Workspace Role | Responsibility |
+|---|---|
+| Workspace Owner | Full access to all workspace features, settings, and billing. |
+| Admin | Configuration access, team management, and all module access. |
+| Manager | Operational visibility, reporting, and team supervision. |
+| Sales | Pipeline management, deal tracking, and customer conversations. |
+| Support | Inbox access, conversation handling, and customer resolution. |
+| Marketing | Campaign management, broadcast creation, and audience management. |
+| Viewer | Read-only access to workspace data and analytics. |
+
+Workspace Roles are entirely separate from Platform Roles. These two permission systems are intentionally independent and serve completely different audiences.
+
+### 46.5 Customer Data Privacy
+
+Customer data privacy is a strategic commitment, not a policy checkbox.
+
+Principles:
+
+- Every Workspace is isolated by design.
+- Customers control their own workspace data through Workspace Role assignments.
+- Platform administrators can provision, configure, and manage subscriptions but do not interact with operational customer data.
+- Customers never see another customer's conversations, contacts, deals, campaigns, or automation configuration.
+- SyncWA does not use customer data from one workspace to benefit another workspace.
+- Privacy is fundamental to the product trust that enables SyncWA to handle sensitive customer communication data.
+
+This privacy philosophy should inform future security page content, terms of service language, and enterprise sales conversations.
+
+### 46.6 Workspace Lifecycle
+
+Every Workspace follows a defined lifecycle managed by the Platform CRM:
+
+```text
+Lead Created
+  |
+  v
+Demo Completed
+  |
+  v
+Trial Workspace Provisioned
+  |
+  v
+Subscription Activated
+  |
+  v
+Workspace Owner Onboarded
+  |
+  v
+Team Invited
+  |
+  v
+Active Usage
+  |
+  v
+Expansion
+  |
+  v
+Renewal
+  |
+  v
+Advocacy or Churn
+```
+
+At every stage, the Platform CRM tracks the workspace status, enabling the SyncWA team to manage the full customer relationship from first enquiry through renewal.
+
+### 46.7 Future Scalability
+
+The Workspace model is designed to scale horizontally. Adding new customers means provisioning new Workspaces. Each Workspace is independent. Platform growth does not require restructuring existing customer data.
+
+This scalability is a deliberate product design decision that positions SyncWA to serve hundreds or thousands of customer businesses without operational complexity growing at the same rate.
+
+### 46.8 Workspace Membership Implementation
+
+Workspace membership is already implemented in the database via a single-relationship mapping chain:
+
+```text
+profiles (representing users)
+   │
+   ▼
+account_id (Workspace foreign key)
+   │
+   ▼
+account_role (workspace permission enum)
+```
+
+During Phase 1 (MVP), we will fully reuse this existing membership model. We do not plan to introduce a separate `workspace_users` or memberships join table. If business requirements evolve (e.g., to support agency use cases where one user needs to switch between multiple workspaces), this schema may be refactored to support many-to-many relationships. However, the current single-membership model remains the default to maintain query simplicity, speed up developer onboarding, and preserve multi-tenant boundary integrity.
+
+---
+
+## 47. Platform Domains
+
+To support clean codebase organization, modularity, and scalability, the Platform CRM (Owner Portal) is organized into business domains rather than arbitrary database tables or loose route controllers. All future database tables, APIs, services, and UI modules must belong to one of these defined platform domains.
+
+The official Platform Domains are:
+
+1. **Website Domain**: Responsible for capturing and qualifying inbound traffic and customer interest from the marketing website.
+2. **Customer Management Domain**: Manages qualified platform leads, sales qualification history, demo schedules, and the platform sales pipeline.
+3. **Workspace Domain**: Provisions isolated customer workspaces (accounts), manages the customer onboarding lifecycle, and tracks workspace status and configuration parameters.
+4. **Subscription Domain**: Manages plans, pricing tiers, billing cycles, features list gating, and overall subscription state.
+5. **Billing Domain**: Governs invoicing, stripe payment transactions, receipts, and subscription history.
+6. **Support Domain**: Tracks support tickets, general enquiries, customer requests, and issue resolution status.
+7. **Analytics Domain**: Consolidates platform-level metrics, workspace usage telemetry, trial-to-paid conversion rates, and churn indicators.
+8. **Administration Domain**: Configures system settings, registers platform operators, manages permissions, and governs feature flags.
+9. **Integration Domain**: Houses the registry of platform-approved integrations and API scopes.
+
+---
+
+### 47.1 Platform CRM Implementation Roadmap
+
+The implementation of these domains is phased to minimize operational risk, validate market demand, and establish a proven baseline before committing to billing automation.
+
+```text
+Phase 1: MVP (Acquisition & Onboarding)
+  ├── Website Domain (leads, tags, activities)
+  └── Workspace Domain (accounts, profiles, onboarding checklist)
+        │
+        ▼
+Phase 2: Commercialization
+  ├── Subscription Domain (tiers, plans, lifecycle)
+  └── Billing Domain (payments, invoices, receipts)
+        │
+        ▼
+Phase 3: Scale & Operation
+  ├── Support & Customer Success Domains
+  ├── Platform Analytics & Audit
+  └── Marketplace & Integrations Registry
+```
+
+#### Phase 1 — MVP (Acquisition and Onboarding)
+The initial phase focuses strictly on customer acquisition, qualifying interest, and provisioning customer workspaces. It avoids complex self-service billing code and payment gateways, prioritizing multi-tenant stability and manual onboarding verification.
+
+- **Website Domain**: Captures and qualifies leads from public forms.
+  - *Initial Entities*: 
+    - `platform_leads`: Stores enquiries submitted from the public contact forms (name, company, email, phone, message, interest area, qualification status, and assignee).
+    - `lead_activities`: Tracks sales tasks, contact notes, and follow-ups.
+    - `platform_tags`: Global tags used to categorize leads and workspaces.
+    - `lead_tag_map`: Connects leads to platform tags in a many-to-many relationship.
+- **Workspace Domain**: Provisions workspaces and tracks customer onboarding.
+  - *Implementation Strategy*: Reuse existing entities. The Workspace concept maps to the existing `accounts` table, and Workspace Members map to the existing `profiles` table.
+  - *Extension Plan*: The MVP intentionally minimizes schema changes by extending proven entities instead of introducing parallel structures. The `accounts` table will be extended with:
+    - `status` (trial, active, suspended)
+    - `trial_end` (date of trial expiry)
+    - `subscription_id` (reference to future subscription record)
+    - `onboarding_status` (JSONB field tracking onboarding progress)
+
+#### Phase 2 — Commercialization
+Phase 2 introduces automated billing, plans, and subscription history. These capabilities are intentionally deferred until after commercial validation of the MVP.
+
+- **Subscription Domain**: Manages plans, pricing tiers, and active subscription states.
+- **Billing Domain**: Governs invoicing, stripe payment transactions, receipts, and subscription history.
+- *Future Entities*: `plans`, `subscriptions`, `invoices`, `receipts`, and `subscription_history`.
+
+#### Phase 3 — Scale and Operation
+Introduces mature SaaS operational capabilities and support workflows.
+
+- **Support Domain**: Handles client ticketing, workspace troubleshooting, and technical logs.
+- **Customer Success Domain**: Monitors workspace health metrics and flags renewal risks.
+- **Platform Analytics Domain**: Tracks aggregate system usage, message volume, and workspace activity.
+- **Administration & Integration Domains**: Manages system-wide feature flags, operator logs, and the integration marketplace.
+
+---
+
+## 48. Architecture Principles
+
+The evolution of the SyncWA database and platform architecture must adhere to the following principles. These guidelines serve as the engineering standard for all database design, migration authoring, and API development.
+
+### 48.1 Reuse Before Create
+Before creating any new database table, model, or service, engineers must audit the existing database schema to determine if an equivalent structure already exists. New tables should only be introduced when the existing architecture cannot satisfy business requirements.
+
+### 48.2 Extend Before Duplicate
+If an existing entity already represents the required business concept, extend it (by adding nullable or defaulted columns, indexes, or metadata fields) instead of creating a parallel, duplicate table. 
+- *Example*: The database already has the `accounts` table, which represents the business concept of a **Workspace**. We must extend the `accounts` table to support workspace statuses and onboarding info, rather than creating a duplicate `workspaces` table.
+
+### 48.3 Domain-Driven Growth
+The Platform CRM must evolve systematically by business domains. Avoid adding isolated tables or custom API endpoints without a clear alignment to one of the defined platform domains. This ensures code modularity, making future extraction into separate services straightforward.
+
+### 48.4 Architecture Audit First
+Before implementing any future Platform CRM phase, feature branch, or database migration, developers must perform a thorough architecture audit. The objectives of this audit are to:
+- Review the existing schema and migrations.
+- Identify reusable entities and relationship paths.
+- Prevent duplicate conceptual models.
+- Naming consistency across tables, columns, and enums.
+- Preserve overall architectural integrity.
+This is an official engineering guideline that must be executed prior to schema modification.
+
+---
+
+## 49. Appendices
 
 ### Appendix A: Current Website Page Strategy Summary
 
@@ -4785,37 +5504,36 @@ Do not:
 
 ### Appendix F: Future Website Roadmap
 
-Phase 1:
+**Current (Live):**
 
 - Home.
 - Features.
 - Pricing.
 - Contact.
-- Login/signup brand cleanup.
-- Core screenshots.
+- Login and signup.
+- Privacy Policy.
+- Terms of Service.
 
-Phase 2:
+**Coming Soon:**
 
-- FAQ.
 - Help Center basics.
 - API Docs.
 - Security page.
 - Integrations overview.
+- Release Notes.
 
-Phase 3:
+**Future Vision:**
 
-- Use-case pages.
 - Blog.
-- Release notes.
-- Customer stories.
+- Use-case pages.
+- Customer Stories.
 - Comparison pages.
-
-Phase 4:
-
+- Documentation.
 - Enterprise content.
-- Partner/integration marketplace content.
+- Partner and integration marketplace content.
 - Advanced product tours.
 - ROI and industry pages.
+- Careers.
 
 ### Appendix G: Glossary
 

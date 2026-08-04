@@ -1980,3 +1980,214 @@ Terms of Service
 Version
 
 (Optional)
+
+---
+
+# Privacy Policy
+
+**Effective Date:** August 4, 2026
+
+Welcome to **SyncWA**.
+
+Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your information when you use the SyncWA platform.
+
+---
+
+# Information We Collect
+
+We may collect the following information when you use SyncWA:
+
+- Name
+- Email address
+- Phone number
+- Company information
+- Account credentials
+- Workspace information
+- Usage and activity data
+- Customer data you choose to manage within SyncWA
+
+---
+
+# How We Use Your Information
+
+We use your information to:
+
+- Create and manage your account
+- Provide and improve our services
+- Secure your workspace
+- Respond to support requests
+- Communicate important product updates
+- Monitor platform performance and reliability
+
+We do not sell your personal information.
+
+---
+
+# Customer Data
+
+You retain ownership of the customer data you store in SyncWA.
+
+We process this data only to provide the requested services.
+
+---
+
+# Data Security
+
+We take reasonable technical and organizational measures to protect your information from unauthorized access, loss, misuse, or disclosure.
+
+No internet-based service can guarantee absolute security.
+
+---
+
+# Third-Party Services
+
+SyncWA may integrate with third-party services such as:
+
+- WhatsApp Business Platform
+- Authentication providers
+- Cloud infrastructure providers
+- Analytics services
+
+These services are governed by their respective privacy policies.
+
+---
+
+# Cookies
+
+SyncWA may use cookies or similar technologies to:
+
+- Keep you signed in
+- Improve user experience
+- Analyze platform usage
+
+You may control cookies through your browser settings.
+
+---
+
+# Your Rights
+
+Depending on your location, you may have the right to:
+
+- Access your personal information
+- Request corrections
+- Request deletion of your account
+- Contact us regarding privacy concerns
+
+---
+
+# Changes to This Policy
+
+We may update this Privacy Policy from time to time.
+
+Any significant changes will be published on this page.
+
+---
+
+# Contact
+
+If you have questions regarding this Privacy Policy, please contact us through the Contact page or email our support team.
+
+---
+
+Thank you for trusting SyncWA.
+
+---
+
+# Terms of Service
+
+**Effective Date:** August 4, 2026
+
+Welcome to **SyncWA**.
+
+By accessing or using SyncWA, you agree to these Terms of Service.
+
+If you do not agree with these terms, please do not use the platform.
+
+---
+
+# Use of the Service
+
+SyncWA provides a cloud-based platform for managing customer communication, CRM, sales, marketing, automation, and related business operations.
+
+You agree to use the platform responsibly and in compliance with applicable laws.
+
+---
+
+# Account Responsibilities
+
+You are responsible for:
+
+- Maintaining the security of your account
+- Protecting your login credentials
+- Activities performed under your account
+- Providing accurate information
+
+Notify us immediately if you believe your account has been compromised.
+
+---
+
+# Acceptable Use
+
+You agree not to:
+
+- Use SyncWA for illegal activities
+- Send spam or unauthorized communications
+- Attempt to gain unauthorized access
+- Disrupt or interfere with platform operations
+- Upload malicious software or harmful content
+
+Violation of these terms may result in account suspension or termination.
+
+---
+
+# Customer Data
+
+You retain ownership of your data.
+
+By using SyncWA, you grant us permission to process your data solely for providing and maintaining the service.
+
+---
+
+# Availability
+
+We strive to provide a reliable service but do not guarantee uninterrupted availability.
+
+Maintenance, updates, or unforeseen issues may occasionally affect access.
+
+---
+
+# Intellectual Property
+
+SyncWA, including its branding, software, design, and content, is the property of SyncWA and may not be copied, modified, or distributed without permission.
+
+---
+
+# Limitation of Liability
+
+To the maximum extent permitted by law, SyncWA shall not be liable for indirect, incidental, special, or consequential damages arising from the use of the platform.
+
+---
+
+# Termination
+
+We reserve the right to suspend or terminate accounts that violate these Terms of Service or misuse the platform.
+
+---
+
+# Changes to These Terms
+
+We may update these Terms of Service periodically.
+
+Continued use of SyncWA after changes become effective constitutes acceptance of the updated terms.
+
+---
+
+# Contact
+
+For questions regarding these Terms of Service, please contact us through the Contact page.
+
+---
+
+Thank you for choosing SyncWA.
+
+---

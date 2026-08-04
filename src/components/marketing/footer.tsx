@@ -77,8 +77,8 @@ export function Footer() {
     { label: "Pricing", href: "/pricing" },
     { label: "Contact", href: "/contact" },
     { label: "Login", href: "/login" },
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms of Service", href: "#" },
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms of Service", href: "/terms" },
   ];
 
   return (

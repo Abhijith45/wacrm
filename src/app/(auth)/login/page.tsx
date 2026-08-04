@@ -81,12 +81,12 @@ function LoginPageInner() {
   return (
     <div className="flex min-h-screen w-full bg-background overflow-hidden font-sans selection:bg-primary/20">
       {/* Left Brand Panel: Hidden on mobile/tablet, flex on desktop */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-card/30 via-background to-background border-r border-border p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-card/30 via-background to-background border-r border-border p-8 py-6 flex-col justify-between relative overflow-hidden">
         {/* Subtle background glow */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,oklch(0.526_0.247_293_/_0.08),transparent_50%)] pointer-events-none" />
         
         {/* Top: Logo & Welcome */}
-        <div className="space-y-6 relative z-10">
+        <div className="space-y-4 relative z-10">
           <Link href="/" className="inline-flex items-center space-x-2">
             <img
               src="/syncwa-logo-no-bg.png"
@@ -125,7 +125,7 @@ function LoginPageInner() {
         </div>
 
         {/* Bottom: Large Dashboard Preview */}
-        <div className="w-full relative z-10 pt-8 mt-auto">
+        <div className="w-full relative z-10 pt-4 mt-auto">
           <BrowserFrame url="app.syncwa.com/dashboard">
             <DashboardMockup />
           </BrowserFrame>
