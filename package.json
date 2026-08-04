@@ -36,7 +36,11 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "seed": "node scripts/seed/index.mjs demo",
+    "seed:demo": "node scripts/seed/index.mjs demo",
+    "seed:testing": "node scripts/seed/index.mjs testing",
+    "seed:production": "node scripts/seed/index.mjs production"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

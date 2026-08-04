@@ -646,3 +646,76 @@ export interface QuickReply {
   created_at: string;
   updated_at: string;
 }
+
+// ============================================================
+// Platform Lead entities (036.5_syncwa_platform_foundation.sql)
+// ============================================================
+
+export type PlatformLeadStatus =
+  | "new"
+  | "contacted"
+  | "qualified"
+  | "demo_scheduled"
+  | "demo_completed"
+  | "trial_active"
+  | "converted"
+  | "lost"
+  | "unqualified";
+
+export interface PlatformLead {
+  id: string;
+  name: string;
+  company_name: string;
+  email: string;
+  phone: string | null;
+  country: string | null;
+  company_size: string | null;
+  message: string;
+  subject: string | null;
+  interest_area: string | null;
+  source: string;
+  status: PlatformLeadStatus;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_content: string | null;
+  utm_term: string | null;
+  referrer_url: string | null;
+  assigned_to: string | null;
+  workspace_id: string | null;
+  converted_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// Platform Customer entities (036.6_syncwa_platform_customer.sql)
+// ============================================================
+
+export type PlatformCustomerStatus =
+  | "prospect"
+  | "trial"
+  | "trial_expiring"
+  | "active"
+  | "suspended"
+  | "cancelled"
+  | "archived";
+
+export interface PlatformCustomer {
+  id: string;
+  lead_id: string | null;
+  company_name: string;
+  email: string;
+  phone: string | null;
+  company_size: string | null;
+  status: PlatformCustomerStatus;
+  trial_extension_count?: number;
+  suspended_reason?: string | null;
+  commercial_notes?: string | null;
+  cancelled_at?: string | null;
+  archived_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+

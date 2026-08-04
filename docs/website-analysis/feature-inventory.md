@@ -1,0 +1,36 @@
+# Feature Inventory - SyncWA
+
+This document lists every implemented and partially implemented feature in the SyncWA repository, verified through source code inspection.
+
+---
+
+## Feature Inventory Table
+
+| Feature | Description | Status | Evidence | Category | Public Visibility |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Shared Inbox** | A collaborative, multi-agent inbox for replying to WhatsApp messages with assignments, status tags, and contact detail panels. | Implemented | [inbox](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/inbox/) | Communication | Public |
+| **Reactions & swipe-quotes** | Support for quoting messages, copying message text, and sending/receiving emoji reactions. | Implemented | [message-actions.tsx](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/inbox/message-actions.tsx) | Communication | Public |
+| **Contact Directory** | Creation, search, tags, custom fields, and detailed profiles for WhatsApp contacts. | Implemented | [contacts](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/contacts/) | CRM | Public |
+| **Contact Notes** | Chronological internal notes on contact profiles to share context within the team. | Implemented | [contact-detail-view.tsx:L263](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/contacts/contact-detail-view.tsx#L263) | CRM | Public |
+| **Contact Deduplication** | Automated merging and prevention of duplicate contact phone numbers. | Implemented | [dedupe.ts](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/lib/contacts/dedupe.ts) | CRM | Public |
+| **CSV Contact Import** | Mass-importing contacts from CSV files with column mapping and duplicate skipping. | Implemented | [import-modal.tsx](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/contacts/import-modal.tsx) | CRM | Public |
+| **Sales Pipelines** | Visual Kanban board for tracking deals, managing stages, dragging cards, and updating status (open, won, lost). | Implemented | [pipelines](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/pipelines/) | Sales/CRM | Public |
+| **Currency Customization** | Setting a custom currency at the account level for deals and pipeline-stage valuations. | Implemented | [deals-settings.tsx](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/settings/deals-settings.tsx) | Sales/CRM | Public |
+| **Pipeline Analytics** | Summary charts tracking pipeline distributions, conversion rates, and total open deal values. | Implemented | [pipeline-analytics.tsx](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/pipelines/pipeline-analytics.tsx) | Analytics | Public |
+| **WhatsApp Config Integration** | Direct setup panel for Meta Phone Number ID, WABA ID, Access tokens, and Verify tokens. | Implemented | [whatsapp-config.tsx](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/settings/whatsapp-config.tsx) | Integration | Public |
+| **Meta Template Sync** | Fetching and synchronizing Meta-approved templates into the CRM, including template statuses. | Implemented | [template-manager.tsx](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/settings/template-manager.tsx) | Marketing | Public |
+| **Broadcast Campaigns Wizard** | Visual wizard for selecting templates, filtering target audiences, mapping body/header parameters, and scheduling sends. | Implemented | [broadcasts](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/broadcasts/) | Marketing | Public |
+| **No-Code Automations Builder** | visual rules canvas mapping webhook/app triggers (inbound messages, keywords, tag additions) to automated actions (messaging, assignments, tag actions, webhook deliveries). | Implemented | [automation-builder.tsx](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/automations/automation-builder.tsx) | Automation | Public |
+| **No-Code Flows Canvas** | Visual drag-and-drop conversational chatbot builder utilizing node states, variable capture, branching conditions, media sends, and human handoffs. | Implemented | [flows](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/flows/) | Automation | Public |
+| **AI Reply Drafting** | LLM-generated one-click drafts embedded in the message composer. | Implemented | [message-composer.tsx](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/inbox/message-composer.tsx) | AI | Public |
+| **AI Auto-Reply Bot** | LLM bot responding to unassigned threads, respecting conversation caps, human takeover triggers, and routing. | Implemented | [auto-reply.ts](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/lib/ai/auto-reply.ts) | AI | Public |
+| **AI Knowledge Base** | Vector grounding for AI replies via lexical full-text and semantic vector search in uploaded company documentation. | Implemented | [knowledge.ts](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/lib/ai/knowledge.ts) | AI | Public |
+| **AI Usage Logger** | Token tracking dashboard displaying model/provider spends and transaction histories. | Implemented | [ai-usage.tsx](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/agents/ai-usage.tsx) | AI/Analytics | Public |
+| **Agent Presence Indicators** | Live agent heartbeat mechanism to display online/away indicators to teammates. | Implemented | [presence-heartbeat.tsx](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/presence/presence-heartbeat.tsx) | Collaboration | Public |
+| **Multi-user Workspace Sharing** | Inviting team members using secure links, assigning roles, and changing permissions. | Implemented | [members-tab.tsx](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/settings/members-tab.tsx) | Administration | Public |
+| **Public REST API** | Extensible API endpoints for sending messages, reading contacts, launching broadcasts, and configuring hooks. | Implemented | [public-api.md](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/docs/public-api.md) | Developer | Public |
+| **Outbound Event Webhooks** | Outgoing HTTPS webhook subscriptions to send event notifications (`message.received`, `message.status_updated`, `conversation.created`) to external servers. | Implemented | [deliver.ts](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/lib/webhooks/deliver.ts) | Developer | Public |
+| **SSRF Webhook Guard** | Outbound SSRF protection preventing webhook deliveries to private/internal/RFC1918 networks. | Implemented | [ssrf.ts](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/lib/webhooks/ssrf.ts) | Security | Public |
+| **Model Context Protocol (MCP)** | natural language AI integration server to interact with the CRM. | Implemented | [mcp-server](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/mcp-server/) | Developer | Public |
+| **Theme Customizer** | Choice between 5 visual CSS-driven styles (Violet, Emerald, Cobalt, Amber, Rose). | Implemented | [appearance-panel.tsx](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/components/settings/appearance-panel.tsx) | Personalization | Public |
+| **Webhook Delivery Queue** | Scheduled queue-based retry-with-backoff delivery mechanism for failed outbound webhooks. | Incomplete | [deliver.ts:L15-18](file:///c:/Users/Abhijeet%20Rawat/Desktop/wacrm/src/lib/webhooks/deliver.ts#L15-L18) | Developer | Coming Soon |
