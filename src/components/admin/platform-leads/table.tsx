@@ -44,6 +44,23 @@ export function LeadTable({ leads }: LeadTableProps) {
     }
   };
 
+  const getRequestTypeVariant = (requestType: string) => {
+    switch (requestType) {
+      case "DEMO":
+        return "info" as const;
+      case "ONBOARDING":
+        return "success" as const;
+      case "GENERAL":
+        return "neutral" as const;
+      case "PARTNERSHIP":
+        return "warning" as const;
+      case "TECHNICAL":
+        return "destructive" as const;
+      default:
+        return "neutral" as const;
+    }
+  };
+
   return (
     <div className="bg-card border border-border rounded-xl overflow-hidden select-none">
       <div className="overflow-x-auto">
@@ -51,6 +68,7 @@ export function LeadTable({ leads }: LeadTableProps) {
           <thead>
             <tr className="border-b border-border bg-muted/20 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
               <th className="px-6 py-4">Status</th>
+              <th className="px-6 py-4">Request Type</th>
               <th className="px-6 py-4">Name</th>
               <th className="px-6 py-4">Company</th>
               <th className="px-6 py-4">Email</th>
@@ -68,6 +86,14 @@ export function LeadTable({ leads }: LeadTableProps) {
                   <StatusBadge
                     label={lead.status.replace("_", " ")}
                     variant={getStatusVariant(lead.status)}
+                  />
+                </td>
+
+                {/* Request Type Column */}
+                <td className="px-6 py-3.5 whitespace-nowrap">
+                  <StatusBadge
+                    label={lead.request_type.toLowerCase()}
+                    variant={getRequestTypeVariant(lead.request_type)}
                   />
                 </td>
 

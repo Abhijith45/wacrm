@@ -1,9 +1,9 @@
 {
   "LoginPage": {
     "titleAccept": "Sign in to accept",
-    "titleWelcome": "Welcome back",
+    "titleWelcome": "Welcome Back",
     "descAccept": "Sign in and we'll take you to the invitation.",
-    "descWelcome": "Sign in to your account",
+    "descWelcome": "Sign in to your SyncWA workspace.",
     "emailLabel": "Email",
     "emailPlaceholder": "you@example.com",
     "passwordLabel": "Password",
@@ -12,7 +12,10 @@
     "signingIn": "Signing in...",
     "signIn": "Sign in",
     "noAccount": "Don't have an account?",
-    "createAccount": "Create account"
+    "createAccount": "Create account",
+    "needAccessTitle": "Need access to SyncWA?",
+    "needAccessDesc": "SyncWA workspaces are created through our onboarding process. Talk to our team to get started.",
+    "talkToSales": "Talk to Sales"
   },
   "Sidebar": {
     "title": "CRM Template for WhatsApp",

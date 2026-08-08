@@ -61,6 +61,22 @@ export function LeadHeader({ lead, onConvert, isConverting }: LeadHeaderProps) {
                   : "warning"
               }
             />
+            {lead.request_type && (
+              <StatusBadge
+                label={lead.request_type.toLowerCase()}
+                variant={
+                  lead.request_type === "DEMO"
+                    ? "info"
+                    : lead.request_type === "ONBOARDING"
+                    ? "success"
+                    : lead.request_type === "GENERAL"
+                    ? "neutral"
+                    : lead.request_type === "PARTNERSHIP"
+                    ? "warning"
+                    : "destructive"
+                }
+              />
+            )}
           </div>
           <p className="text-xs text-muted-foreground leading-normal">
             Enquiry from <span className="font-bold text-foreground">{lead.company_name}</span> &bull; Source: <span className="capitalize">{lead.source.replace("_", " ")}</span>

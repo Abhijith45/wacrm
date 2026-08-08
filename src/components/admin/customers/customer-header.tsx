@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { ArrowLeft, RefreshCw, Layers, ShieldAlert, CreditCard, HelpCircle, Trash2, Calendar } from "lucide-react";
-import Link from "next/link";
+import { ArrowLeft, RefreshCw, Layers, CreditCard, HelpCircle, Trash2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/admin/common/status-badge";
 import type { PlatformCustomer, PlatformCustomerStatus } from "@/types";
@@ -14,6 +13,11 @@ interface CustomerHeaderProps {
   onboardingPercentage: number;
   onRefresh: () => void;
   refreshing: boolean;
+  isEditMode: boolean;
+  onEditToggle: () => void;
+  onSave: () => void;
+  onCancel: () => void;
+  onBackClick: () => void;
 }
 
 export function CustomerHeader({
@@ -23,6 +27,11 @@ export function CustomerHeader({
   onboardingPercentage,
   onRefresh,
   refreshing,
+  isEditMode,
+  onEditToggle,
+  onSave,
+  onCancel,
+  onBackClick,
 }: CustomerHeaderProps) {
   // Helper for plan status badge color
   const getPlanColor = (status: PlatformCustomerStatus) => {
@@ -30,10 +39,13 @@ export function CustomerHeader({
       case "active":
         return "success";
       case "trial":
-      case "trial_expiring":
         return "warning";
+      case "pending_approval":
+      case "paused":
+        return "info";
       case "suspended":
       case "cancelled":
+      case "blocked":
         return "destructive";
       default:
         return "info";
@@ -44,20 +56,20 @@ export function CustomerHeader({
     <div className="space-y-4 select-none">
       {/* Back button */}
       <div className="flex items-center justify-between">
-        <Link
-          href="/admin/customers"
-          className="flex items-center text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+        <button
+          onClick={onBackClick}
+          className="flex items-center text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none p-0 focus:outline-none"
         >
           <ArrowLeft className="h-3.5 w-3.5 mr-1" />
           Back to Directory
-        </Link>
+        </button>
 
         {/* Sync/Refresh Action */}
         <Button
           variant="outline"
           size="sm"
           onClick={onRefresh}
-          disabled={refreshing}
+          disabled={refreshing || isEditMode}
           className="text-xs border-border bg-card text-foreground hover:bg-muted/50 h-8 cursor-pointer font-semibold"
         >
           <RefreshCw className={`h-3 w-3 mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
@@ -71,8 +83,13 @@ export function CustomerHeader({
         {/* Name and Meta */}
         <div className="space-y-2">
           <div className="space-y-1">
-            <h1 className="text-lg font-black text-foreground uppercase tracking-wider">
-              {customer.company_name}
+            <h1 className="text-lg font-black text-foreground uppercase tracking-wider flex items-center gap-2">
+              <span>{customer.company_name}</span>
+              {isEditMode && (
+                <span className="text-[10px] font-black uppercase bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded border border-amber-500/15 animate-pulse">
+                  Editing
+                </span>
+              )}
             </h1>
             <p className="text-xs text-muted-foreground font-semibold flex items-center">
               <Layers className="h-3.5 w-3.5 mr-1 text-muted-foreground/60" />
@@ -99,40 +116,71 @@ export function CustomerHeader({
           </div>
         </div>
 
-        {/* Disabled Future Action Placeholders (PRD / Sprint Scope) */}
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled
-            className="text-[10px] uppercase font-bold border-border/80 text-muted-foreground/50 h-8 cursor-not-allowed"
-            title="Billing Management placeholder (future release)"
-          >
-            <CreditCard className="h-3 w-3 mr-1" />
-            Billing Info
-          </Button>
+        {/* Action Controls */}
+        <div className="flex flex-wrap gap-2 items-center">
+          {isEditMode ? (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onCancel}
+                className="text-[10px] uppercase font-bold border-border bg-card text-foreground hover:bg-muted/50 h-8 cursor-pointer"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={onSave}
+                size="sm"
+                className="text-[10px] uppercase font-bold h-8 cursor-pointer bg-primary text-primary-foreground hover:bg-primary/95"
+              >
+                Save Changes
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onEditToggle}
+                className="text-[10px] uppercase font-bold border-border bg-card text-foreground hover:bg-muted/50 h-8 cursor-pointer"
+              >
+                Edit Customer
+              </Button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            disabled
-            className="text-[10px] uppercase font-bold border-border/80 text-muted-foreground/50 h-8 cursor-not-allowed"
-            title="Support Desk placeholder (future release)"
-          >
-            <HelpCircle className="h-3 w-3 mr-1" />
-            Open Support
-          </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled
+                className="text-[10px] uppercase font-bold border-border/80 text-muted-foreground/50 h-8 cursor-not-allowed"
+                title="Billing Management placeholder (future release)"
+              >
+                <CreditCard className="h-3 w-3 mr-1" />
+                Billing Info
+              </Button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            disabled
-            className="text-[10px] uppercase font-bold border-border/80 text-muted-foreground/50 h-8 cursor-not-allowed hover:bg-destructive/10"
-            title="Platform Clean placeholder (future release)"
-          >
-            <Trash2 className="h-3 w-3 mr-1" />
-            Decommission
-          </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled
+                className="text-[10px] uppercase font-bold border-border/80 text-muted-foreground/50 h-8 cursor-not-allowed"
+                title="Support Desk placeholder (future release)"
+              >
+                <HelpCircle className="h-3 w-3 mr-1" />
+                Open Support
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                disabled
+                className="text-[10px] uppercase font-bold border-border/80 text-muted-foreground/50 h-8 cursor-not-allowed hover:bg-destructive/10"
+                title="Platform Clean placeholder (future release)"
+              >
+                <Trash2 className="h-3 w-3 mr-1" />
+                Decommission
+              </Button>
+            </>
+          )}
         </div>
 
       </div>

@@ -41,8 +41,8 @@ export const PRICING_CONFIG = {
       description: "Perfect for individuals and small teams getting started with customer communication.",
       priceMonthly: "Coming Soon",
       priceYearly: "Coming Soon",
-      ctaText: "Start Free",
-      ctaHref: "/signup",
+      ctaText: "Book a Demo",
+      ctaHref: "/contact",
       includes: [
         "Shared Team Inbox",
         "Contact Management",
@@ -60,8 +60,8 @@ export const PRICING_CONFIG = {
       description: "Designed for growing businesses managing larger teams and customer operations.",
       priceMonthly: "Coming Soon",
       priceYearly: "Coming Soon",
-      ctaText: "Get Started",
-      ctaHref: "/signup",
+      ctaText: "Book a Demo",
+      ctaHref: "/contact",
       isPopular: true,
       includes: [
         "Everything in Starter",
@@ -82,7 +82,7 @@ export const PRICING_CONFIG = {
       priceMonthly: "Contact Sales",
       priceYearly: "Contact Sales",
       ctaText: "Contact Sales",
-      ctaHref: "mailto:support@syncwa.com",
+      ctaHref: "/contact",
       includes: [
         "Everything in Professional",
         "Dedicated Success Manager",

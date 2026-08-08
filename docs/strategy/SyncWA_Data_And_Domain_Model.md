@@ -462,6 +462,15 @@ Customer roles govern access inside a specific workspace:
 - **Subscription Hierarchy**: Subscriptions belong to Workspaces. Invoices belong to Subscriptions. Payments belong to Invoices.
 - **Support Scope**: Support Tickets are owned by Customers, referencing a specific workspace.
 
+### 9.1 Privacy Architecture & Domain Boundaries
+SyncWA enforces strict isolation boundaries between the Platform CRM (Domain A) and the Customer CRM (Domain B):
+1. **Platform Lead Ownership**: Platform Leads belong only to SyncWA (Domain A) and are captured via the website or inbound sales requests.
+2. **Platform Lead Conversion**: A Platform Lead converts only to a Platform Customer (Domain A). Under no circumstances can a Platform Lead become a Contact or a Customer CRM Lead in Domain B.
+3. **No CRM Infiltration**: Platform Leads never appear inside any Customer CRM workspace context.
+4. **Customer CRM Entry Point**: The Customer CRM (Domain B) begins exclusively with a **Contact** entity (representing the customer's prospect, WhatsApp enquiry, or client relationship). There is no customer-level "Lead" concept or table.
+5. **Customer Operational Privacy**: Customer workspace operational records (including contacts, chat conversations, messaging logs, pipelines, deals, broadcasts, and automation rules) are private.
+6. **Platform Owner Access Restriction**: Platform Owners and internal staff can only view aggregated workspace usage and metadata metrics (e.g. Contacts count, Deals count, WhatsApp integration connection status). They must never access or query individual customer contact details, phone numbers, email contents, or messaging transcripts.
+
 ---
 
 ## 10. Domain Boundaries

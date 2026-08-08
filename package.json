@@ -40,7 +40,8 @@
     "seed": "node scripts/seed/index.mjs demo",
     "seed:demo": "node scripts/seed/index.mjs demo",
     "seed:testing": "node scripts/seed/index.mjs testing",
-    "seed:production": "node scripts/seed/index.mjs production"
+    "seed:production": "node scripts/seed/index.mjs production",
+    "seed:credentials": "node scripts/create-credentials.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

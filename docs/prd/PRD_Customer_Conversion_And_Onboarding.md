@@ -94,18 +94,21 @@ A **Customer** represents the commercial relationship between SyncWA and an orga
 ## 5. Customer Status Lifecycle
 
 The Customer entity moves through the following business lifecycle states:
-- **Prospect**: The initial conversion stage before a workspace is fully initialized and operational.
-- **Trial**: The workspace has been provisioned successfully and is operating under the 14-day free trial plan.
-- **Active**: The customer has added valid subscription billing details and is on an active paid plan.
-- **Suspended**: The trial has expired, or billing payment failed. All WhatsApp incoming/outgoing broadcasts are blocked, but historical data is retained.
-- **Cancelled**: The customer explicitly terminated their account. Access is revoked, and resources are flagged for teardown.
-- **Archived**: Historical customer record. Workspace resources have been completely deleted.
+- **PENDING_APPROVAL**: Customer completed onboarding/payment requirements. Waiting for Founder approval.
+- **TRIAL**: Trial is active. Workspace usable.
+- **ACTIVE**: Paid customer. Normal operation.
+- **PAUSED**: Temporary access restriction (e.g. payment overdue, customer request). Can be reactivated.
+- **SUSPENDED**: Administrative suspension (e.g. compliance/security review). Requires manual review before reactivation.
+- **CANCELLED**: Customer voluntarily terminated service. No active subscription.
+- **BLOCKED**: Permanent administrative block (e.g. fraud, abuse). Cannot be reactivated through normal UI.
+- **ARCHIVED**: Historical record. Workspace retained for auditing.
 
 > [!IMPORTANT]
 > The **Customer Status** is completely independent of:
 > 1. **Lead Status** (e.g. `converted`, `lost` which belong to CRM acquisition logs).
 > 2. **Workspace Status** (e.g. `active`, `maintenance`).
 > 3. **Subscription Status** (e.g. `trialing`, `active`, `past_due`, `unpaid`).
+> 4. **Onboarding Status** (progressing from `invitation_sent` to `completed` independently).
 
 ---
 
@@ -229,13 +232,13 @@ The initial Workspace Owner carries absolute administrative privileges within th
 
 | Stage | Description | Business Sign-off Criteria |
 |---|---|---|
-| **1. Workspace Created** | Database containers initialized | Customer & Workspace records commit to database. |
-| **2. Owner Invited** | Welcome email dispatched | Sendgrid/SMTP log returns success. |
-| **3. Owner Logged In** | Owner completes credential setup | First login session recorded. |
-| **4. Channels Connected** | Owner connects a WhatsApp number | WhatsApp Webhook returns active handshake. |
-| **5. Team Invited** | Owner invites team members | At least one workspace user invited. |
-| **6. Contacts Imported** | Customer imports contact list | CSV upload completed or API sync established. |
-| **7. First Broadcast** | Customer executes campaign | First message broadcast sent. |
+| **1. INVITATION_SENT** | Welcome invitation sent to owner | Customer & Workspace records commit, invitation credentials issued. |
+| **2. PROFILE_SETUP** | Owner sets up credentials and logs in | First sign in session recorded in user auth history. |
+| **3. TEAM_SETUP** | Owner invites and setups team members | At least one additional workspace operator/agent profile created. |
+| **4. WHATSAPP_CONNECTED** | WhatsApp Business API channel connected | WhatsApp configuration record added and verified. |
+| **5. CRM_INITIALIZED** | Workspace contact directory seeded | At least one client contact successfully created or imported. |
+| **6. FIRST_ACTIVITY** | Customers start communicating or managing deals | At least one WhatsApp chat conversation or commercial deal created. |
+| **7. COMPLETED** | Onboarding milestones complete | All configuration checklists are satisfied (100% progress reached). |
 
 ---
 

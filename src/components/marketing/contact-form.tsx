@@ -20,7 +20,8 @@ export function ContactForm() {
     phoneNumber: "",
     companySize: "",
     subject: "",
-    message: ""
+    message: "",
+    requestType: ""
   });
   
   const [utmParams, setUtmParams] = useState({
@@ -81,6 +82,7 @@ export function ContactForm() {
     } else if (!/\S+@\S+\.\S+/.test(form.businessEmail)) {
       newErrors.businessEmail = "Please enter a valid email address";
     }
+    if (!form.requestType.trim()) newErrors.requestType = "Please select how we can help you";
     if (!form.subject.trim()) newErrors.subject = "Subject is required";
     if (!form.message.trim()) newErrors.message = "Message is required";
 
@@ -226,6 +228,32 @@ export function ContactForm() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* How can we help you? */}
+        <div className="space-y-1.5">
+          <Label htmlFor="requestType" className="text-xs font-semibold">
+            How can we help you? <span className="text-primary">*</span>
+          </Label>
+          <select
+            id="requestType"
+            name="requestType"
+            value={form.requestType}
+            onChange={handleChange}
+            disabled={submitting}
+            className={cn(
+              "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-xs shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+              errors.requestType && "border-destructive focus-visible:ring-destructive"
+            )}
+          >
+            <option value="">Select option...</option>
+            <option value="DEMO">Book a Demo</option>
+            <option value="ONBOARDING">Start Using SyncWA</option>
+            <option value="GENERAL">General Enquiry</option>
+            <option value="PARTNERSHIP">Partnership</option>
+            <option value="TECHNICAL">Technical Question</option>
+          </select>
+          {errors.requestType && <p className="text-[10px] text-destructive">{errors.requestType}</p>}
+        </div>
+
         {/* Company Size */}
         <div className="space-y-1.5">
           <Label htmlFor="companySize" className="text-xs font-semibold">
@@ -246,23 +274,23 @@ export function ContactForm() {
             <option value="50+">50+ employees</option>
           </select>
         </div>
+      </div>
 
-        {/* Subject */}
-        <div className="space-y-1.5">
-          <Label htmlFor="subject" className="text-xs font-semibold">
-            Subject <span className="text-primary">*</span>
-          </Label>
-          <Input
-            id="subject"
-            name="subject"
-            value={form.subject}
-            onChange={handleChange}
-            placeholder="Product Demo, Pricing inquiry, etc."
-            disabled={submitting}
-            className={cn(errors.subject && "border-destructive focus-visible:ring-destructive")}
-          />
-          {errors.subject && <p className="text-[10px] text-destructive">{errors.subject}</p>}
-        </div>
+      {/* Subject */}
+      <div className="space-y-1.5">
+        <Label htmlFor="subject" className="text-xs font-semibold">
+          Subject <span className="text-primary">*</span>
+        </Label>
+        <Input
+          id="subject"
+          name="subject"
+          value={form.subject}
+          onChange={handleChange}
+          placeholder="Product Demo, Pricing inquiry, etc."
+          disabled={submitting}
+          className={cn(errors.subject && "border-destructive focus-visible:ring-destructive")}
+        />
+        {errors.subject && <p className="text-[10px] text-destructive">{errors.subject}</p>}
       </div>
 
       {/* Message */}

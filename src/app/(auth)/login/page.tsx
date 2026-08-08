@@ -253,19 +253,37 @@ function LoginPageInner() {
               </div>
 
               {/* Footer text */}
-              <p className="text-center text-xs text-muted-foreground">
-                {t('noAccount')}{" "}
-                <Link
-                  href={
-                    inviteToken
-                      ? `/signup?invite=${encodeURIComponent(inviteToken)}`
-                      : "/signup"
-                  }
-                  className="text-primary font-semibold hover:underline"
-                >
-                  {t('createAccount')}
-                </Link>
-              </p>
+              {inviteToken ? (
+                <p className="text-center text-xs text-muted-foreground">
+                  {t('noAccount')}{" "}
+                  <Link
+                    href={`/signup?invite=${encodeURIComponent(inviteToken)}`}
+                    className="text-primary font-semibold hover:underline"
+                  >
+                    {t('createAccount')}
+                  </Link>
+                </p>
+              ) : (
+                <div className="space-y-4 pt-2">
+                  <div className="text-center space-y-1">
+                    <p className="text-xs font-bold text-foreground">
+                      {t('needAccessTitle')}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground leading-normal">
+                      {t('needAccessDesc')}
+                    </p>
+                  </div>
+                  <Link href="/contact" className="block">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full border-border text-xs h-9 cursor-pointer"
+                    >
+                      {t('talkToSales')}
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </CardContent>
           </Card>
           

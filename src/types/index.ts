@@ -684,6 +684,7 @@ export interface PlatformLead {
   assigned_to: string | null;
   workspace_id: string | null;
   converted_at: string | null;
+  request_type: string;
   created_at: string;
   updated_at: string;
 }
@@ -693,13 +694,44 @@ export interface PlatformLead {
 // ============================================================
 
 export type PlatformCustomerStatus =
-  | "prospect"
+  | "pending_approval"
   | "trial"
-  | "trial_expiring"
   | "active"
+  | "paused"
   | "suspended"
   | "cancelled"
+  | "blocked"
   | "archived";
+
+export enum PlatformCustomerStatusEnum {
+  PENDING_APPROVAL = "pending_approval",
+  TRIAL = "trial",
+  ACTIVE = "active",
+  PAUSED = "paused",
+  SUSPENDED = "suspended",
+  CANCELLED = "cancelled",
+  BLOCKED = "blocked",
+  ARCHIVED = "archived",
+}
+
+export type OnboardingStage =
+  | "invitation_sent"
+  | "profile_setup"
+  | "team_setup"
+  | "whatsapp_connected"
+  | "crm_initialized"
+  | "first_activity"
+  | "completed";
+
+export enum OnboardingStageEnum {
+  INVITATION_SENT = "invitation_sent",
+  PROFILE_SETUP = "profile_setup",
+  TEAM_SETUP = "team_setup",
+  WHATSAPP_CONNECTED = "whatsapp_connected",
+  CRM_INITIALIZED = "crm_initialized",
+  FIRST_ACTIVITY = "first_activity",
+  COMPLETED = "completed",
+}
 
 export interface PlatformCustomer {
   id: string;

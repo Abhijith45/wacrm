@@ -23,7 +23,7 @@ export function CustomerSummaryCards({
   let trialRemainingDaysLabel = "N/A";
   let isTrialActive = false;
 
-  if (customer.status === "trial" || customer.status === "trial_expiring") {
+  if (customer.status === "trial") {
     isTrialActive = true;
     if (trialEndsAt) {
       const diff = new Date(trialEndsAt).getTime() - new Date().getTime();

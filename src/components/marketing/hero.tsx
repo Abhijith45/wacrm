@@ -45,10 +45,10 @@ export function Hero({ isLoggedIn = false }: HeroProps) {
           ) : (
             <>
               <Link
-                href="/signup"
+                href="/contact"
                 className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto flex items-center justify-center space-x-2")}
               >
-                <span>Start Free</span>
+                <span>Book a Demo</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link

@@ -3,7 +3,7 @@
     "titleAccept": "로그인하여 수락하기",
     "titleWelcome": "다시 오신 것을 환영합니다",
     "descAccept": "로그인하시면 초대 페이지로 이동합니다.",
-    "descWelcome": "계정에 로그인하세요",
+    "descWelcome": "SyncWA 워크스페이스에 로그인하세요.",
     "emailLabel": "이메일",
     "emailPlaceholder": "you@example.com",
     "passwordLabel": "비밀번호",
@@ -12,7 +12,10 @@
     "signingIn": "로그인 중...",
     "signIn": "로그인",
     "noAccount": "계정이 없으신가요?",
-    "createAccount": "계정 만들기"
+    "createAccount": "계정 만들기",
+    "needAccessTitle": "SyncWA 액세스가 필요하신가요?",
+    "needAccessDesc": "SyncWA 워크스페이스는 온보딩 과정을 통해 생성됩니다. 시작하려면 저희 팀에 문의하세요.",
+    "talkToSales": "영업팀에 문의하기"
   },
   "Sidebar": {
     "title": "WhatsApp용 CRM 템플릿",

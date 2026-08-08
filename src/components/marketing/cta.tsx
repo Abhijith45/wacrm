@@ -37,10 +37,10 @@ export function CTA({ isLoggedIn = false }: CTAProps) {
             </Link>
           ) : (
             <Link
-              href="/signup"
+              href="/contact"
               className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto flex items-center justify-center space-x-2")}
             >
-              <span>Start Free</span>
+              <span>Talk to Sales</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           )}

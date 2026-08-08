@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -30,11 +30,7 @@ export async function middleware(request: NextRequest) {
   // `supabaseResponse` via setAll() above. Any response we return in
   // place of `supabaseResponse` (every redirect / JSON branch below)
   // is a fresh object that does NOT carry those Set-Cookie headers, so
-  // the rotated token never reaches the browser. The next request then
-  // replays the old, now-consumed refresh token, the refresh fails, and
-  // the session wedges — the user gets a broken reload after idling and
-  // can only recover by manually clearing cookies (issue #288). Copy the
-  // refreshed cookies onto whatever response we hand back to fix that.
+  // the refreshed cookies must survive onto whatever response we return.
   const withRefreshedCookies = <T extends NextResponse>(response: T): T => {
     supabaseResponse.cookies.getAll().forEach((cookie) => {
       response.cookies.set(cookie)
@@ -42,7 +38,28 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  // Auth pages - redirect to dashboard if already logged in.
+  let isPlatformStaff = false;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_platform_staff")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    isPlatformStaff = profile?.is_platform_staff === true;
+  }
+
+  // Redirect public signup to login unless an invite parameter is present
+  if (!user && request.nextUrl.pathname === '/signup') {
+    const inviteToken = request.nextUrl.searchParams.get('invite')
+    if (!inviteToken) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      url.search = ''
+      return withRefreshedCookies(NextResponse.redirect(url))
+    }
+  }
+
+  // Auth pages - redirect to landing pages if already logged in.
   // Exception: when an invite token is in the query string we
   // send the already-signed-in user to /join/<token> instead so
   // they can accept the invitation in one click. Without this,
@@ -57,13 +74,14 @@ export async function middleware(request: NextRequest) {
     const inviteToken = request.nextUrl.searchParams.get('invite')
     if (
       inviteToken &&
+      !isPlatformStaff &&
       (request.nextUrl.pathname === '/login' ||
         request.nextUrl.pathname === '/signup')
     ) {
       url.pathname = `/join/${encodeURIComponent(inviteToken)}`
       url.search = ''
     } else {
-      url.pathname = '/dashboard'
+      url.pathname = isPlatformStaff ? '/admin' : '/dashboard'
       url.search = ''
     }
     return withRefreshedCookies(NextResponse.redirect(url))
@@ -71,10 +89,33 @@ export async function middleware(request: NextRequest) {
 
   // Protected pages - redirect to login if not authenticated
   const protectedPaths = ['/dashboard', '/inbox', '/contacts', '/pipelines', '/broadcasts', '/automations', '/settings', '/admin']
-  if (!user && protectedPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
+  const isProtected = protectedPaths.some(path => request.nextUrl.pathname.startsWith(path))
+  if (!user && isProtected) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return withRefreshedCookies(NextResponse.redirect(url))
+  }
+
+  // Gated path enforcement for authenticated users
+  if (user) {
+    if (isPlatformStaff) {
+      // Platform Staff cannot access customer dashboard paths
+      const customerPaths = ['/dashboard', '/inbox', '/contacts', '/pipelines', '/broadcasts', '/automations', '/settings']
+      if (customerPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/admin'
+        url.search = ''
+        return withRefreshedCookies(NextResponse.redirect(url))
+      }
+    } else {
+      // Customer users cannot access platform admin paths
+      if (request.nextUrl.pathname.startsWith('/admin')) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/dashboard'
+        url.search = ''
+        return withRefreshedCookies(NextResponse.redirect(url))
+      }
+    }
   }
 
   // API routes that need auth (not webhooks)
@@ -85,7 +126,7 @@ export async function middleware(request: NextRequest) {
     )
   }
 
-  return supabaseResponse
+  return supabaseResponse;
 }
 
 export const config = {

@@ -69,8 +69,9 @@ export class OnboardingService {
     const progressPercentage = OnboardingProgressService.calculateCompletionPercentage(checklist);
     const completed = OnboardingProgressService.isComplete(checklist);
 
-    // B. Fetch existing timeline activities
-    const existingActivities = await getLeadActivities(leadId);
+    // B. Fetch existing timeline activities (bypass if leadId is dummy or missing)
+    const isValidLead = leadId && leadId !== "00000000-0000-0000-0000-000000000000";
+    const existingActivities = isValidLead ? await getLeadActivities(leadId) : [];
     const loggedSteps = new Set<string>();
 
     for (const act of existingActivities) {
@@ -81,18 +82,20 @@ export class OnboardingService {
 
     // Helper function to log steps if not already logged
     const logIfNew = async (stepName: string, notes: string) => {
-      if (!loggedSteps.has(stepName)) {
-        await createLeadActivity(
-          leadId,
-          "note_added",
-          `Onboarding Milestone: ${stepName} completed.`,
-          {
-            system_event: "onboarding_step_completed",
-            step_name: stepName,
-            notes,
-          },
-          operatorId
-        );
+      if (isValidLead) {
+        if (!loggedSteps.has(stepName)) {
+          await createLeadActivity(
+            leadId,
+            "note_added",
+            `Onboarding Milestone: ${stepName} completed.`,
+            {
+              system_event: "onboarding_step_completed",
+              step_name: stepName,
+              notes,
+            },
+            operatorId === "00000000-0000-0000-0000-000000000000" ? undefined : operatorId
+          );
+        }
       }
     };
 
@@ -118,10 +121,26 @@ export class OnboardingService {
     if (completed) {
       if (!loggedSteps.has("Onboarding Completed")) {
         await logIfNew("Onboarding Completed", "Workspace onboarding journey successfully finished!");
-        const orchestrator = new CommunicationOrchestrator();
-        await orchestrator.triggerEvent("ONBOARDING_COMPLETED", leadId, {});
+        if (isValidLead) {
+          const orchestrator = new CommunicationOrchestrator();
+          await orchestrator.triggerEvent("ONBOARDING_COMPLETED", leadId, {});
+        }
       }
     }
+
+    // Persist onboarding status dynamically to database accounts table
+    const { supabaseAdmin } = await import("@/lib/flows/admin-client");
+    const db = supabaseAdmin();
+    await db
+      .from("accounts")
+      .update({
+        onboarding_status: {
+          checklist,
+          progressPercentage,
+          completed,
+        },
+      })
+      .eq("id", accountId);
 
     return {
       checklist,

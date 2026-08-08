@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import {
   Users,
   Layers,
@@ -15,104 +16,138 @@ import { AdminPageHeader } from "@/components/admin/common/page-header";
 import { MetricCard } from "@/components/admin/dashboard/metric-card";
 import { SectionCard } from "@/components/admin/shared/section-card";
 import { StatusBadge } from "@/components/admin/common/status-badge";
-import { getPlatformCommercialMetrics, getPlatformCommunicationMetrics } from "@/lib/leads/repository";
+import {
+  getPlatformCommercialMetrics,
+  getPlatformCommunicationMetrics,
+  getPlatformLeads,
+} from "@/lib/leads/repository";
 
 export default async function AdminDashboardPage() {
-  const [commercialMetrics, commsMetrics] = await Promise.all([
+  const [commercialMetrics, commsMetrics, recentLeadsData] = await Promise.all([
     getPlatformCommercialMetrics(),
     getPlatformCommunicationMetrics(),
+    getPlatformLeads({ pageSize: 4, sortBy: "newest" }),
   ]);
+
+  const recentLeads = recentLeadsData.leads;
+
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case "new":
+        return "info" as const;
+      case "contacted":
+        return "warning" as const;
+      case "qualified":
+        return "success" as const;
+      case "demo_scheduled":
+        return "info" as const;
+      case "demo_completed":
+        return "success" as const;
+      case "trial_active":
+        return "warning" as const;
+      case "converted":
+        return "success" as const;
+      case "lost":
+        return "destructive" as const;
+      case "unqualified":
+        return "neutral" as const;
+      default:
+        return "neutral" as const;
+    }
+  };
 
   const stats = [
     {
       title: "Platform Leads",
       value: String(commercialMetrics.totalLeads),
-      change: "+12.5%",
+      change: "Active Inbound CRM",
       isPositive: true,
-      description: "from public contact forms",
+      description: "leads from contact forms",
       icon: PhoneCall,
       variant: "blue" as const,
+      href: "/admin/platform-leads",
     },
     {
       title: "Active Customers",
       value: String(commercialMetrics.activeCustomers),
-      change: "+8.3%",
+      change: "Production Status",
       isPositive: true,
       description: "active paying clients",
       icon: Users,
       variant: "emerald" as const,
+      href: "/admin/customers",
     },
     {
-      title: "Trial Customers",
-      value: String(commercialMetrics.trialCustomers),
-      change: "+4.2%",
+      title: "Trial / Pending Approval",
+      value: `${commercialMetrics.trialCustomers} / ${commercialMetrics.pendingApprovalCustomers}`,
+      change: "Under Review",
       isPositive: true,
-      description: "workspaces in trial status",
+      description: "workspaces on evaluation",
       icon: Layers,
       variant: "amber" as const,
+      href: "/admin/customers",
     },
     {
-      title: "Expiring Soon",
-      value: String(commercialMetrics.expiringSoonCustomers),
-      change: "Warning",
-      isPositive: false,
-      description: "trials expiring within 3 days",
+      title: "Onboarding Progress",
+      value: `${commercialMetrics.onboardingCompleted} Completed`,
+      change: `In Progress: ${commercialMetrics.onboardingInProgress}`,
+      isPositive: commercialMetrics.onboardingInProgress === 0,
+      description: "customer configuration progress",
       icon: Clock,
-      variant: "amber" as const,
+      variant: "blue" as const,
+      href: "/admin/onboarding",
     },
     {
-      title: "Emails Sent Today",
-      value: String(commsMetrics.sentToday),
-      change: "Lifecycle",
+      title: "Paused / Suspended",
+      value: `${commercialMetrics.pausedCustomers} / ${commercialMetrics.suspendedCustomers}`,
+      change: "Action Required",
+      isPositive: commercialMetrics.suspendedCustomers === 0 && commercialMetrics.pausedCustomers === 0,
+      description: "temporary access restrictions",
+      icon: ShieldAlert,
+      variant: (commercialMetrics.suspendedCustomers > 0 ? "destructive" : "warning") as any,
+      href: "/admin/customers",
+    },
+    {
+      title: "Blocked / Archived",
+      value: `${commercialMetrics.blockedCustomers} / ${commercialMetrics.archivedCustomers}`,
+      change: "Historical Logs",
       isPositive: true,
-      description: "notifications sent today",
-      icon: Mail,
-      variant: "purple" as const,
+      description: "permanent blocks & compliance archives",
+      icon: Users,
+      variant: "neutral" as const,
+      href: "/admin/customers",
     },
-    {
-      title: "Deliveries (Sent / Fail)",
-      value: `${commsMetrics.successful} / ${commsMetrics.failed}`,
-      change: `Pending: ${commsMetrics.pending}`,
-      isPositive: commsMetrics.failed === 0,
-      description: "communication results logs",
-      icon: Mail,
-      variant: commsMetrics.failed > 0 ? ("destructive" as any) : ("emerald" as any),
-    },
-  ];
-
-  const recentLeads = [
-    { name: "Jane Cooper", company: "Acme Corp", email: "jane@acme.com", status: "new", variant: "info" as const, date: "2 mins ago" },
-    { name: "Alex Rivera", company: "Zapier Tech", email: "alex@zapier.com", status: "qualified", variant: "success" as const, date: "15 mins ago" },
-    { name: "Ivan Kovac", company: "Kovac Law", email: "ivan@kovac.com", status: "contacted", variant: "warning" as const, date: "1 hour ago" },
-    { name: "Sarah Connor", company: "Cyberdyne Systems", email: "sarah@cyberdyne.com", status: "demo_scheduled", variant: "info" as const, date: "3 hours ago" },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 select-none">
       {/* Page Header */}
       <AdminPageHeader
         title="Dashboard Overview"
         description="Monitor system-wide SaaS operational metrics, customer onboarding stages, and qualified inbound leads."
       >
-        <Button size="sm" className="text-xs bg-primary hover:bg-primary-hover text-primary-foreground font-semibold cursor-pointer">
-          <Zap className="h-3 w-3 mr-1.5" />
-          Quick Action
-        </Button>
+        <Link href="/admin/platform-leads">
+          <Button size="sm" className="text-xs bg-primary hover:bg-primary-hover text-primary-foreground font-semibold cursor-pointer">
+            <Zap className="h-3 w-3 mr-1.5" />
+            Quick Action
+          </Button>
+        </Link>
       </AdminPageHeader>
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => (
-          <MetricCard
-            key={stat.title}
-            title={stat.title}
-            value={stat.value}
-            change={stat.change}
-            isPositive={stat.isPositive}
-            description={stat.description}
-            icon={stat.icon}
-            variant={stat.variant}
-          />
+          <Link key={stat.title} href={stat.href} className="block transition-transform hover:scale-[1.01]">
+            <MetricCard
+              title={stat.title}
+              value={stat.value}
+              change={stat.change}
+              isPositive={stat.isPositive}
+              description={stat.description}
+              icon={stat.icon}
+              variant={stat.variant}
+            />
+          </Link>
         ))}
       </div>
 
@@ -124,32 +159,49 @@ export default async function AdminDashboardPage() {
             title="Recent Leads"
             subtitle="Latest marketing web enquiries needing qualification."
             action={
-              <Button variant="ghost" size="sm" className="text-[10px] h-7 font-bold text-primary cursor-pointer hover:bg-primary-soft">
-                View All Leads
-                <ArrowUpRight className="h-3 w-3 ml-1" />
-              </Button>
+              <Link href="/admin/platform-leads">
+                <Button variant="ghost" size="sm" className="text-[10px] h-7 font-bold text-primary cursor-pointer hover:bg-primary-soft">
+                  View All Leads
+                  <ArrowUpRight className="h-3 w-3 ml-1" />
+                </Button>
+              </Link>
             }
           >
             <div className="divide-y divide-border">
-              {recentLeads.map((lead) => (
-                <div key={lead.email} className="py-3 flex items-center justify-between first:pt-0 last:pb-0">
-                  <div className="flex items-center space-x-3">
-                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground uppercase">
-                      {lead.name.charAt(0)}
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold text-foreground leading-snug">{lead.name}</h4>
-                      <p className="text-[10px] text-muted-foreground leading-normal">
-                        {lead.company} &bull; {lead.email}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="text-[9px] font-semibold text-muted-foreground shrink-0">{lead.date}</span>
-                    <StatusBadge label={lead.status.replace("_", " ")} variant={lead.variant} />
-                  </div>
+              {recentLeads.length === 0 ? (
+                <div className="py-6 text-center text-xs text-muted-foreground font-semibold italic">
+                  No platform leads recorded in database yet.
                 </div>
-              ))}
+              ) : (
+                recentLeads.map((lead) => (
+                  <Link
+                    key={lead.id}
+                    href={`/admin/platform-leads/${lead.id}`}
+                    className="py-3 flex items-center justify-between hover:bg-muted/30 px-2 rounded-xl transition-colors first:pt-2 last:pb-2"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="h-8 w-8 rounded-full bg-primary-soft border border-primary/10 flex items-center justify-center text-xs font-bold text-primary uppercase shrink-0">
+                        {lead.name.charAt(0)}
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-foreground leading-snug">{lead.name}</h4>
+                        <p className="text-[10px] text-muted-foreground leading-normal">
+                          {lead.company_name} &bull; {lead.email}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span className="text-[9px] font-semibold text-muted-foreground shrink-0">
+                        {new Date(lead.created_at).toLocaleDateString()}
+                      </span>
+                      <StatusBadge
+                        label={lead.status.replace("_", " ")}
+                        variant={getStatusVariant(lead.status)}
+                      />
+                    </div>
+                  </Link>
+                ))
+              )}
             </div>
           </SectionCard>
         </div>

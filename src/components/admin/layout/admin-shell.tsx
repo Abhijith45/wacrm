@@ -14,7 +14,7 @@ export function AdminShell({ staff, children }: AdminShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-muted/40 font-sans overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-background">
       {/* Sidebar */}
       <AdminSidebar staff={staff} isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
@@ -23,7 +23,7 @@ export function AdminShell({ staff, children }: AdminShellProps) {
         <AdminHeader staff={staff} onMenuToggle={() => setSidebarOpen(true)} />
 
         {/* Content Container */}
-        <main className="flex-1 overflow-y-auto bg-muted/10 p-6 md:p-8">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
           <div className="max-w-7xl mx-auto space-y-6">
             {children}
           </div>
