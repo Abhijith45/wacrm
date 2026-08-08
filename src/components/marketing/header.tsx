@@ -35,7 +35,7 @@ export function Header({ isLoggedIn = false }: HeaderProps) {
           <Image
             src="/syncwa-logo-no-bg.png"
             alt="SyncWA Logo"
-            width={28}
+            width={100}
             height={28}
             className="h-7 w-auto object-contain"
             priority
