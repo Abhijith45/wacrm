@@ -40,19 +40,21 @@ async function main() {
   // ---------------------------------------------------------------------------
   // 1. Founder / Admin Credentials
   // ---------------------------------------------------------------------------
-  const founderEmail = "founder.admin@syncwa.com";
+  const founderEmails = ["founder@syncwa.com", "founder.admin@syncwa.com"];
   const founderPassword = "SyncWA@Founder2026!";
   const founderName = "SyncWA Founder Admin";
   let founderUserId;
 
-  const existingFounder = await findUserByEmail(supabase, founderEmail);
-  if (existingFounder) {
-    founderUserId = existingFounder.id;
-    await updateProfilePlatformStaff(supabase, founderUserId, "founder");
-  } else {
-    const created = await createAuthUser(supabase, founderEmail, founderPassword, founderName);
-    founderUserId = created.userId;
-    await updateProfilePlatformStaff(supabase, founderUserId, "founder");
+  for (const fEmail of founderEmails) {
+    const existing = await findUserByEmail(supabase, fEmail);
+    if (existing) {
+      founderUserId = existing.id;
+      await updateProfilePlatformStaff(supabase, founderUserId, "founder");
+    } else {
+      const created = await createAuthUser(supabase, fEmail, founderPassword, founderName);
+      founderUserId = created.userId;
+      await updateProfilePlatformStaff(supabase, founderUserId, "founder");
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -215,7 +217,7 @@ async function main() {
 
   console.log(`${C.bold}${C.yellow}1. Founder / Admin Credentials:${C.reset}`);
   console.log(`   ${C.bold}Role:${C.reset}        Platform Staff (Founder Admin)`);
-  console.log(`   ${C.bold}Email:${C.reset}       ${founderEmail}`);
+  console.log(`   ${C.bold}Email:${C.reset}       ${founderEmails.join(" / ")}`);
   console.log(`   ${C.bold}Password:${C.reset}    ${founderPassword}`);
   console.log(`   ${C.bold}Flags:${C.reset}       is_platform_staff = true, platform_role = founder\n`);
 

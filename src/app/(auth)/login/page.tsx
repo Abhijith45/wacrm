@@ -53,27 +53,35 @@ function LoginPageInner() {
     setError(null);
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) {
-      setError(error.message);
+    if (signInError) {
+      setError(signInError.message);
       setLoading(false);
       return;
     }
 
+    // Determine target destination based on whether user is Platform Staff
+    let isPlatformStaff = false;
+    if (authData?.user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_platform_staff")
+        .eq("user_id", authData.user.id)
+        .maybeSingle();
+      isPlatformStaff = profile?.is_platform_staff === true;
+    }
+
     // Full-page navigation (not router.push) so the browser issues a
     // fresh top-level request that carries the just-written Supabase
-    // auth cookies to the middleware gating /dashboard. A soft
-    // client-side navigation can reach the protected route before the
-    // server observes the new session, so the middleware bounces it
-    // back to /login — which looks like the page "just refreshing"
-    // instead of signing in (issue #365). Mirrors the deliberate full
-    // reload the invite-accept flow already uses in join/[token].
-    const destination = inviteToken
+    // auth cookies to the middleware gating /admin or /dashboard.
+    const destination = inviteToken && !isPlatformStaff
       ? `/join/${encodeURIComponent(inviteToken)}`
+      : isPlatformStaff
+      ? "/admin"
       : "/dashboard";
     window.location.href = destination;
   };
