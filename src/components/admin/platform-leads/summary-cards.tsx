@@ -1,5 +1,5 @@
 import React from "react";
-import { PhoneCall, Users, CheckSquare, Layers } from "lucide-react";
+import { PhoneCall, Users, CheckSquare, Layers, Calendar, Zap, Mail } from "lucide-react";
 import { MetricCard } from "@/components/admin/dashboard/metric-card";
 import type { LeadMetrics } from "@/lib/leads/repository";
 
@@ -36,6 +36,27 @@ export function LeadSummaryCards({ metrics }: LeadSummaryCardsProps) {
       description: "upgraded to trial or paid",
       icon: Users,
       variant: "emerald" as const,
+    },
+    {
+      title: "Demo requests",
+      value: metrics.demoRequests,
+      description: "requested product walk-throughs",
+      icon: Calendar,
+      variant: "blue" as const,
+    },
+    {
+      title: "Onboarding requests",
+      value: metrics.onboardingRequests,
+      description: "users waiting to activate workspace",
+      icon: Zap,
+      variant: "emerald" as const,
+    },
+    {
+      title: "General enquiries",
+      value: metrics.generalEnquiries,
+      description: "general, support, or partnership chats",
+      icon: Mail,
+      variant: "neutral" as const,
     },
   ];
 

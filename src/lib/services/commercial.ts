@@ -10,14 +10,15 @@ export class CommercialService {
   static isValidTransition(oldStatus: PlatformCustomerStatus, newStatus: PlatformCustomerStatus): boolean {
     if (oldStatus === newStatus) return true;
 
-    // Transition rules dictionary
+    // Transition rules dictionary matching strict domain requirements
     const transitions: Record<PlatformCustomerStatus, PlatformCustomerStatus[]> = {
-      prospect: ["trial", "cancelled"],
-      trial: ["trial_expiring", "active", "suspended", "cancelled"],
-      trial_expiring: ["trial", "active", "suspended", "cancelled"],
-      active: ["suspended", "cancelled"],
-      suspended: ["active", "trial", "trial_expiring", "cancelled"],
-      cancelled: ["archived"],
+      pending_approval: ["trial", "active", "cancelled", "blocked"],
+      trial: ["active", "paused", "suspended", "cancelled", "blocked"],
+      active: ["paused", "suspended", "cancelled", "blocked"],
+      paused: ["active", "suspended", "cancelled", "blocked"],
+      suspended: ["active", "cancelled", "blocked"],
+      cancelled: ["active", "archived", "blocked"],
+      blocked: ["archived"],
       archived: [], // Terminal state
     };
 
@@ -48,7 +49,7 @@ export class CommercialService {
       throw new Error("Customer profile not found.");
     }
 
-    if (customer.status !== "trial" && customer.status !== "trial_expiring" && customer.status !== "suspended") {
+    if (customer.status !== "trial" && customer.status !== "suspended") {
       throw new Error(`Cannot extend trial for customer in "${customer.status}" status.`);
     }
 
@@ -88,12 +89,6 @@ export class CommercialService {
 
     const nextExtensionCount = (customer.trial_extension_count || 0) + 1;
     let nextStatus: PlatformCustomerStatus = "trial";
-    // Check if new expiry is less than 3 days in the future
-    const diffTime = newExpiry.getTime() - new Date().getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    if (diffDays <= 3 && diffDays > 0) {
-      nextStatus = "trial_expiring";
-    }
 
     const { data: updatedCustomer, error: custUpdateErr } = await supabase
       .from("platform_customers")
@@ -246,18 +241,12 @@ export class CommercialService {
     }
 
     // Check expiration boundaries to decide restored status
-    let restoredStatus: PlatformCustomerStatus = "trial";
-    const expiry = account.trial_ends_at ? new Date(account.trial_ends_at) : new Date(0);
+    let restoredStatus: PlatformCustomerStatus = "active";
+    const expiry = account.trial_ends_at ? new Date(account.trial_ends_at) : null;
     const now = new Date();
-    
-    if (expiry.getTime() <= now.getTime()) {
-      throw new Error("Cannot resume workspace because the trial period has expired. Please extend the trial first.");
-    }
 
-    const diffTime = expiry.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    if (diffDays <= 3) {
-      restoredStatus = "trial_expiring";
+    if (expiry && expiry.getTime() > now.getTime()) {
+      restoredStatus = "trial";
     }
 
     // 2. Reactivate customer and workspace account records
@@ -335,14 +324,15 @@ export class CommercialService {
     let cancelledAt = customer.cancelled_at;
     let archivedAt = customer.archived_at;
 
-    if (newStatus === "suspended") {
+    if (newStatus === "suspended" || newStatus === "paused" || newStatus === "pending_approval") {
       accStatus = "suspended";
-    } else if (newStatus === "cancelled") {
-      accStatus = "suspended";
-      cancelledAt = new Date().toISOString();
-    } else if (newStatus === "archived") {
-      accStatus = "archived";
-      archivedAt = new Date().toISOString();
+    } else if (newStatus === "cancelled" || newStatus === "blocked" || newStatus === "archived") {
+      accStatus = "deactivated";
+      if (newStatus === "cancelled") {
+        cancelledAt = new Date().toISOString();
+      } else if (newStatus === "archived") {
+        archivedAt = new Date().toISOString();
+      }
     }
 
     // 3. Update customer and workspace account records

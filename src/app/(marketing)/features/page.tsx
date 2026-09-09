@@ -129,10 +129,10 @@ export default async function FeaturesPage() {
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              href="mailto:support@syncwa.com?subject=Request%20Product%20Demo"
+              href="/contact"
               className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full sm:w-auto text-center")}
             >
-              Book Demo
+              Book a Demo
             </Link>
           </div>
 
@@ -668,11 +668,11 @@ export default async function FeaturesPage() {
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              href="mailto:support@syncwa.com?subject=Request%20Product%20Demo"
+              href="/contact"
               className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full sm:w-auto flex items-center justify-center space-x-2")}
             >
               <Mail className="h-4 w-4 text-muted-foreground" />
-              <span>Book Demo</span>
+              <span>Book a Demo</span>
             </Link>
           </div>
         </div>

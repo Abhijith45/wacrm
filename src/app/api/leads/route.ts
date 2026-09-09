@@ -20,6 +20,7 @@ export async function POST(request: Request) {
     const country = typeof body.country === "string" ? body.country.trim() : "";
     const interestArea = typeof body.interestArea === "string" ? body.interestArea.trim() : "";
     const source = typeof body.source === "string" ? body.source.trim() : "contact_form";
+    const requestType = typeof body.requestType === "string" ? body.requestType.trim().toUpperCase() : "GENERAL";
 
     // Marketing UTM Parameters
     const utmSource = typeof body.utm_source === "string" ? body.utm_source.trim() : "";
@@ -47,6 +48,10 @@ export async function POST(request: Request) {
     }
     if (!message) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
+    }
+    const allowedRequestTypes = ["DEMO", "ONBOARDING", "GENERAL", "PARTNERSHIP", "TECHNICAL"];
+    if (requestType && !allowedRequestTypes.includes(requestType)) {
+      return NextResponse.json({ error: "Invalid request type" }, { status: 400 });
     }
 
     // Length limit checks (Defensive security guards)
@@ -99,6 +104,7 @@ export async function POST(request: Request) {
       country,
       interest_area: interestArea,
       source,
+      request_type: requestType,
       utm_source: utmSource,
       utm_medium: utmMedium,
       utm_campaign: utmCampaign,

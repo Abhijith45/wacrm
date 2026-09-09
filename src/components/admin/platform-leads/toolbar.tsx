@@ -14,6 +14,7 @@ export function LeadToolbar() {
   const [q, setQ] = useState(searchParams.get("q") || "");
   const [status, setStatus] = useState(searchParams.get("status") || "");
   const [source, setSource] = useState(searchParams.get("source") || "");
+  const [requestType, setRequestType] = useState(searchParams.get("requestType") || "");
   const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "newest");
 
   // Sync state if URL changes out-of-band
@@ -21,6 +22,7 @@ export function LeadToolbar() {
     setQ(searchParams.get("q") || "");
     setStatus(searchParams.get("status") || "");
     setSource(searchParams.get("source") || "");
+    setRequestType(searchParams.get("requestType") || "");
     setSortBy(searchParams.get("sortBy") || "newest");
   }, [searchParams]);
 
@@ -28,6 +30,13 @@ export function LeadToolbar() {
   const updateUrl = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
     
+    // Maintain local query input state to prevent state wiping on dropdown filters
+    if (q.trim()) {
+      params.set("q", q.trim());
+    } else {
+      params.delete("q");
+    }
+
     Object.entries(updates).forEach(([key, value]) => {
       if (value === null || value === "") {
         params.delete(key);
@@ -53,6 +62,7 @@ export function LeadToolbar() {
     setQ("");
     setStatus("");
     setSource("");
+    setRequestType("");
     setSortBy("newest");
     router.push(pathname);
   };
@@ -61,6 +71,7 @@ export function LeadToolbar() {
     searchParams.has("q") ||
     searchParams.has("status") ||
     searchParams.has("source") ||
+    searchParams.has("requestType") ||
     searchParams.get("sortBy") !== "newest" && searchParams.has("sortBy");
 
   return (
@@ -123,6 +134,26 @@ export function LeadToolbar() {
             </select>
           </div>
 
+          {/* Request Type Selector */}
+          <div className="flex items-center space-x-2">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase">Type</span>
+            <select
+              value={requestType}
+              onChange={(e) => {
+                setRequestType(e.target.value);
+                updateUrl({ requestType: e.target.value });
+              }}
+              className="flex h-8 rounded-md border border-input bg-muted/20 px-2 py-1 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              <option value="">All Types</option>
+              <option value="DEMO">Demo</option>
+              <option value="ONBOARDING">Onboarding</option>
+              <option value="GENERAL">General</option>
+              <option value="PARTNERSHIP">Partnership</option>
+              <option value="TECHNICAL">Technical</option>
+            </select>
+          </div>
+
           {/* Sort Selector */}
           <div className="flex items-center space-x-2">
             <span className="text-[10px] font-bold text-muted-foreground uppercase">Sort</span>
@@ -139,6 +170,7 @@ export function LeadToolbar() {
               <option value="name">Name (A-Z)</option>
               <option value="company">Company (A-Z)</option>
               <option value="status">Status (A-Z)</option>
+              <option value="request_type">Request Type</option>
             </select>
           </div>
 

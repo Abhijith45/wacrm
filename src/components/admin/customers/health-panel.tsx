@@ -21,7 +21,7 @@ export function CustomerHealthPanel({
   // Calculate a simplified overall client score based on active metrics (for visualization)
   const isWorkspaceActive = workspaceStatus === "active";
   const isOnboardingComplete = onboardingPercentage === 100;
-  const isTrialOrActive = ["trial", "trial_expiring", "active"].includes(customerStatus);
+  const isTrialOrActive = ["trial", "active", "pending_approval", "paused"].includes(customerStatus);
 
   let healthColor = "text-emerald-500 bg-emerald-500/10 border-emerald-500/20";
   let healthLabel = "Excellent";

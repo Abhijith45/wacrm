@@ -4,6 +4,7 @@ import { getPlatformCustomerDetail } from "@/lib/leads/repository";
 import { supabaseAdmin } from "@/lib/flows/admin-client";
 import { OnboardingService } from "@/lib/services/onboarding/service";
 import { CustomerOperationsCenter } from "@/components/admin/customers/operations-center";
+import { getCurrentPlatformStaff } from "@/lib/auth/platform";
 
 interface Params {
   customerId: string;
@@ -24,6 +25,9 @@ export default async function CustomerOperationsPage({
 }) {
   const { customerId } = await params;
 
+  // Verify platform staff authentication first
+  const staff = await getCurrentPlatformStaff();
+
   // 1. Fetch detailed customer parameters from database layers
   const detail = await getPlatformCustomerDetail(customerId);
   if (!detail) {
@@ -38,7 +42,7 @@ export default async function CustomerOperationsPage({
       detail.customer.lead_id,
       detail.account.id,
       detail.ownerProfile.user_id,
-      "00000000-0000-0000-0000-000000000000" // System operator identifier
+      staff.userId
     );
   }
 

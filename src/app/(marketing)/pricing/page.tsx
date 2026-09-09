@@ -117,17 +117,17 @@ export default async function PricingPage() {
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
             <Link
-              href={isLoggedIn ? "/dashboard" : "/signup"}
+              href={isLoggedIn ? "/dashboard" : "/contact"}
               className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto flex items-center justify-center space-x-2")}
             >
-              <span>Start Free</span>
+              <span>{isLoggedIn ? "Go to Dashboard" : "Book a Demo"}</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              href="mailto:support@syncwa.com"
+              href="/contact"
               className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full sm:w-auto text-center")}
             >
-              Contact Sales
+              Talk to Sales
             </Link>
           </div>
         </div>
@@ -217,18 +217,18 @@ export default async function PricingPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto pt-2">
             <Link
-              href={isLoggedIn ? "/dashboard" : "/signup"}
+              href={isLoggedIn ? "/dashboard" : "/contact"}
               className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto flex items-center justify-center space-x-2")}
             >
-              <span>Start Free</span>
+              <span>{isLoggedIn ? "Go to Dashboard" : "Book a Demo"}</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              href="mailto:support@syncwa.com"
+              href="/contact"
               className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full sm:w-auto flex items-center justify-center space-x-2")}
             >
               <Mail className="h-4 w-4 text-muted-foreground" />
-              <span>Book Demo</span>
+              <span>Talk to Sales</span>
             </Link>
           </div>
         </div>

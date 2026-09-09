@@ -20,7 +20,7 @@ export function Header({ isLoggedIn = false }: HeaderProps) {
   const navigationLinks = [
     { label: "Features", href: "/features" },
     { label: "Pricing", href: "/pricing" },
-    { label: "Contact", href: "/contact" },
+    { label: "Talk to Sales", href: "/contact" },
   ];
 
   const handleLinkClick = () => {
@@ -35,7 +35,7 @@ export function Header({ isLoggedIn = false }: HeaderProps) {
           <Image
             src="/syncwa-logo-no-bg.png"
             alt="SyncWA Logo"
-            width={28}
+            width={100}
             height={28}
             className="h-7 w-auto object-contain"
             priority
@@ -72,8 +72,8 @@ export function Header({ isLoggedIn = false }: HeaderProps) {
               <Link href="/login" className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}>
                 Login
               </Link>
-              <Link href="/signup" className={cn(buttonVariants({ size: "sm" }))}>
-                Start Free
+              <Link href="/contact" className={cn(buttonVariants({ size: "sm" }))}>
+                Talk to Sales
               </Link>
             </>
           )}
@@ -139,11 +139,11 @@ export function Header({ isLoggedIn = false }: HeaderProps) {
                         Login
                       </Link>
                       <Link
-                        href="/signup"
+                        href="/contact"
                         onClick={handleLinkClick}
                         className={cn(buttonVariants({ size: "default" }), "w-full text-center")}
                       >
-                        Start Free
+                        Talk to Sales
                       </Link>
                     </>
                   )}

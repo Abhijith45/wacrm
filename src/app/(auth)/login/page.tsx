@@ -53,27 +53,35 @@ function LoginPageInner() {
     setError(null);
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: authData, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) {
-      setError(error.message);
+    if (signInError) {
+      setError(signInError.message);
       setLoading(false);
       return;
     }
 
+    // Determine target destination based on whether user is Platform Staff
+    let isPlatformStaff = false;
+    if (authData?.user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_platform_staff")
+        .eq("user_id", authData.user.id)
+        .maybeSingle();
+      isPlatformStaff = profile?.is_platform_staff === true;
+    }
+
     // Full-page navigation (not router.push) so the browser issues a
     // fresh top-level request that carries the just-written Supabase
-    // auth cookies to the middleware gating /dashboard. A soft
-    // client-side navigation can reach the protected route before the
-    // server observes the new session, so the middleware bounces it
-    // back to /login — which looks like the page "just refreshing"
-    // instead of signing in (issue #365). Mirrors the deliberate full
-    // reload the invite-accept flow already uses in join/[token].
-    const destination = inviteToken
+    // auth cookies to the middleware gating /admin or /dashboard.
+    const destination = inviteToken && !isPlatformStaff
       ? `/join/${encodeURIComponent(inviteToken)}`
+      : isPlatformStaff
+      ? "/admin"
       : "/dashboard";
     window.location.href = destination;
   };
@@ -253,19 +261,37 @@ function LoginPageInner() {
               </div>
 
               {/* Footer text */}
-              <p className="text-center text-xs text-muted-foreground">
-                {t('noAccount')}{" "}
-                <Link
-                  href={
-                    inviteToken
-                      ? `/signup?invite=${encodeURIComponent(inviteToken)}`
-                      : "/signup"
-                  }
-                  className="text-primary font-semibold hover:underline"
-                >
-                  {t('createAccount')}
-                </Link>
-              </p>
+              {inviteToken ? (
+                <p className="text-center text-xs text-muted-foreground">
+                  {t('noAccount')}{" "}
+                  <Link
+                    href={`/signup?invite=${encodeURIComponent(inviteToken)}`}
+                    className="text-primary font-semibold hover:underline"
+                  >
+                    {t('createAccount')}
+                  </Link>
+                </p>
+              ) : (
+                <div className="space-y-4 pt-2">
+                  <div className="text-center space-y-1">
+                    <p className="text-xs font-bold text-foreground">
+                      {t('needAccessTitle')}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground leading-normal">
+                      {t('needAccessDesc')}
+                    </p>
+                  </div>
+                  <Link href="/contact" className="block">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full border-border text-xs h-9 cursor-pointer"
+                    >
+                      {t('talkToSales')}
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </CardContent>
           </Card>
           

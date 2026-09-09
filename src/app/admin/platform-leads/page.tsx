@@ -9,6 +9,7 @@ import { LeadPagination } from "@/components/admin/platform-leads/pagination";
 import { RefreshButton } from "@/components/admin/platform-leads/refresh-button";
 import { getPlatformLeads, getLeadMetrics } from "@/lib/leads/repository";
 import { Button } from "@/components/ui/button";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Platform Leads | SyncWA Admin",
@@ -19,7 +20,8 @@ interface SearchParams {
   q?: string;
   status?: string;
   source?: string;
-  sortBy?: "newest" | "oldest" | "name" | "company" | "status";
+  requestType?: string;
+  sortBy?: "newest" | "oldest" | "name" | "company" | "status" | "request_type";
   page?: string;
 }
 
@@ -42,6 +44,7 @@ export default async function PlatformLeadsPage({
         q: params.q,
         status: params.status,
         source: params.source,
+        requestType: params.requestType,
         sortBy: params.sortBy,
         page,
         pageSize: 20,
@@ -120,7 +123,7 @@ export default async function PlatformLeadsPage({
           actionLabel="Go to Contact Page"
           onAction={async () => {
             "use server";
-            // Navigate back to the client inquiry form (handled by routing)
+            redirect("/contact");
           }}
         />
       ) : (

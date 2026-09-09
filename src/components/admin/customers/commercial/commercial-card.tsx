@@ -86,15 +86,19 @@ export function CommercialCard({
   // Human-friendly status helper
   const getStatusLabelColor = (status: PlatformCustomerStatus) => {
     switch (status) {
-      case "trial":
-        return "warning";
-      case "trial_expiring":
-        return "warning";
       case "active":
         return "success";
+      case "trial":
+        return "warning";
+      case "pending_approval":
+        return "info";
+      case "paused":
+        return "info";
       case "suspended":
         return "destructive";
       case "cancelled":
+        return "destructive";
+      case "blocked":
         return "destructive";
       default:
         return "info";
@@ -139,11 +143,13 @@ export function CommercialCard({
               disabled={updating || loading}
               className="flex h-8 w-full rounded-md border border-input bg-muted/30 px-3 py-1 text-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 font-bold"
             >
+              <option value="pending_approval">Pending Approval</option>
               <option value="trial">Trial</option>
-              <option value="trial_expiring">Trial Expiring</option>
               <option value="active">Active Subscription</option>
+              <option value="paused">Paused</option>
               <option value="suspended">Suspended</option>
               <option value="cancelled">Cancelled</option>
+              <option value="blocked">Blocked</option>
               <option value="archived">Archived</option>
             </select>
           </div>
@@ -152,7 +158,7 @@ export function CommercialCard({
           <div className="flex gap-2 pt-1.5">
             <Button
               onClick={() => setShowExtendDialog(true)}
-              disabled={updating || loading || (customer.status !== "trial" && customer.status !== "trial_expiring" && customer.status !== "suspended")}
+              disabled={updating || loading || (customer.status !== "trial" && customer.status !== "suspended")}
               variant="outline"
               size="sm"
               className="flex-1 text-xs border-border bg-card text-foreground hover:bg-muted/50 h-8 cursor-pointer"
@@ -161,7 +167,7 @@ export function CommercialCard({
             </Button>
             <Button
               onClick={handleSuspendToggle}
-              disabled={updating || loading || customer.status === "cancelled" || customer.status === "archived"}
+              disabled={updating || loading || customer.status === "cancelled" || customer.status === "blocked" || customer.status === "archived"}
               variant={customer.status === "suspended" ? "default" : "destructive"}
               size="sm"
               className="flex-1 text-xs h-8 cursor-pointer"

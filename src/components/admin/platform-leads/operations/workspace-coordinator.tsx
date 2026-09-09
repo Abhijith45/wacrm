@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   UserCheck,
   Rocket,
@@ -62,12 +62,14 @@ export function LeadDetailsWorkspace({
   const [tagsPool, setTagsPool] = useState<PlatformTag[]>(allTags);
   const [onboarding, setOnboarding] = useState<OnboardingPayload | null>(initialOnboarding);
   const [customer, setCustomer] = useState<PlatformCustomer | null>(initialCustomer);
-
-
   
   const [loading, setLoading] = useState(false);
   const [showConvertModal, setShowConvertModal] = useState(false);
   const [converting, setConverting] = useState(false);
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("syncwa-breadcrumb", { detail: lead.company_name || lead.name }));
+  }, [lead.company_name, lead.name]);
 
   // 0. Lead Conversion Command Mutation
   const handleConvertLead = async () => {

@@ -17,10 +17,13 @@ export default async function AdminCustomersPage() {
       case "active":
         return "success";
       case "trial":
-      case "trial_expiring":
         return "warning";
+      case "pending_approval":
+      case "paused":
+        return "info";
       case "suspended":
       case "cancelled":
+      case "blocked":
         return "destructive";
       default:
         return "info";
@@ -102,7 +105,7 @@ export default async function AdminCustomersPage() {
                       <td className="py-3.5 text-right pl-3">
                         <Link href={`/admin/customers/${cust.id}`}>
                           <button className="inline-flex items-center space-x-1 text-[11px] font-black text-primary hover:text-primary-hover uppercase tracking-wider cursor-pointer">
-                            <span>Open Cockpit</span>
+                            <span>View Customer</span>
                             <ArrowUpRight className="h-3.5 w-3.5" />
                           </button>
                         </Link>

@@ -24,7 +24,7 @@ const CONTACT_CONFIG = {
   email: "support@syncwa.com",
   whatsappNumber: "+91 98765 43210",
   whatsappLink: "https://wa.me/919876543210",
-  demoLink: "mailto:support@syncwa.com?subject=Request%20Product%20Demo",
+  demoLink: "#contact-form",
   businessHours: {
     days: "Monday – Friday",
     hours: "09:00 AM – 06:00 PM",
@@ -190,7 +190,7 @@ export default async function ContactPage() {
             </div>
 
             {/* Right Column: Contact Form */}
-            <div className="lg:col-span-7">
+            <div id="contact-form" className="lg:col-span-7 scroll-mt-20">
               <ContactForm />
             </div>
 
@@ -239,17 +239,17 @@ export default async function ContactPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto pt-2">
             <Link
-              href={CONTACT_CONFIG.demoLink}
+              href={isLoggedIn ? "/dashboard" : "#contact-form"}
               className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto flex items-center justify-center space-x-2")}
             >
-              <span>Book Demo</span>
+              <span>{isLoggedIn ? "Go to Dashboard" : "Book a Demo"}</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              href={isLoggedIn ? "/dashboard" : "/signup"}
+              href="#contact-form"
               className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full sm:w-auto text-center")}
             >
-              Start Free
+              Talk to Sales
             </Link>
           </div>
         </div>

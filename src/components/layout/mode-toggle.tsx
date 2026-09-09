@@ -1,5 +1,4 @@
-"use client";
-
+import React, { useState, useEffect } from "react";
 import { Moon, Sun } from "lucide-react";
 
 import { useTheme } from "@/hooks/use-theme";
@@ -18,7 +17,13 @@ import { useTranslations } from "next-intl";
 export function ModeToggle({ className }: { className?: string }) {
   const t = useTranslations("ModeToggle");
   const { mode, toggleMode } = useTheme();
-  const goingTo = mode === "dark" ? "light" : "dark";
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const goingTo = (!mounted || mode === "dark") ? "light" : "dark";
   const switchLabel = t("switchMode", { mode: goingTo });
   
   return (
@@ -32,7 +37,7 @@ export function ModeToggle({ className }: { className?: string }) {
         className,
       )}
     >
-      {mode === "dark" ? (
+      {!mounted || mode === "dark" ? (
         <Moon className="h-5 w-5" />
       ) : (
         <Sun className="h-5 w-5" />

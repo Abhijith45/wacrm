@@ -18,6 +18,7 @@ export interface CreateLeadInput {
   utm_content?: string;
   utm_term?: string;
   referrer_url?: string;
+  request_type?: string;
 }
 
 /**
@@ -90,6 +91,7 @@ export async function createPlatformLead(input: CreateLeadInput): Promise<Platfo
       subject: input.subject?.trim() || null,
       interest_area: input.interest_area?.trim() || null,
       source: input.source || "contact_form",
+      request_type: input.request_type || "GENERAL",
       utm_source: input.utm_source || null,
       utm_medium: input.utm_medium || null,
       utm_campaign: input.utm_campaign || null,
@@ -112,7 +114,8 @@ export interface GetLeadsOptions {
   q?: string;
   status?: string;
   source?: string;
-  sortBy?: "newest" | "oldest" | "name" | "company" | "status";
+  requestType?: string;
+  sortBy?: "newest" | "oldest" | "name" | "company" | "status" | "request_type";
   page?: number;
   pageSize?: number;
 }
@@ -143,7 +146,7 @@ export async function getPlatformLeads(options: GetLeadsOptions): Promise<GetLea
   // 1. Search Query Parameter filter (Multi-column ILIKE matching)
   if (options.q?.trim()) {
     const term = `%${options.q.trim()}%`;
-    query = query.or(`name.ilike.${term},company_name.ilike.${term},email.ilike.${term},phone.ilike.${term}`);
+    query = query.or(`name.ilike.${term},company_name.ilike.${term},email.ilike.${term},phone.ilike.${term},request_type.ilike.${term}`);
   }
 
   // 2. Status Lifecycle filter
@@ -154,6 +157,11 @@ export async function getPlatformLeads(options: GetLeadsOptions): Promise<GetLea
   // 3. Marketing Source filter
   if (options.source?.trim()) {
     query = query.eq("source", options.source.trim());
+  }
+
+  // 3b. Request Type filter
+  if (options.requestType?.trim()) {
+    query = query.eq("request_type", options.requestType.trim());
   }
 
   // 4. Server-side Sorting
@@ -168,6 +176,8 @@ export async function getPlatformLeads(options: GetLeadsOptions): Promise<GetLea
     query = query.order("company_name", { ascending: true });
   } else if (sortBy === "status") {
     query = query.order("status", { ascending: true });
+  } else if (sortBy === "request_type") {
+    query = query.order("request_type", { ascending: true });
   }
 
   // 5. Paginated execution range
@@ -195,6 +205,9 @@ export interface LeadMetrics {
   newLeads: number;
   qualifiedLeads: number;
   convertedLeads: number;
+  demoRequests: number;
+  onboardingRequests: number;
+  generalEnquiries: number;
 }
 
 /**
@@ -205,11 +218,19 @@ export async function getLeadMetrics(): Promise<LeadMetrics> {
 
   const { data, error } = await supabase
     .from("platform_leads")
-    .select("status");
+    .select("status, request_type");
 
   if (error) {
     console.error("[getLeadMetrics] fetch error:", error);
-    return { totalLeads: 0, newLeads: 0, qualifiedLeads: 0, convertedLeads: 0 };
+    return {
+      totalLeads: 0,
+      newLeads: 0,
+      qualifiedLeads: 0,
+      convertedLeads: 0,
+      demoRequests: 0,
+      onboardingRequests: 0,
+      generalEnquiries: 0,
+    };
   }
 
   const stats = {
@@ -217,12 +238,19 @@ export async function getLeadMetrics(): Promise<LeadMetrics> {
     newLeads: 0,
     qualifiedLeads: 0,
     convertedLeads: 0,
+    demoRequests: 0,
+    onboardingRequests: 0,
+    generalEnquiries: 0,
   };
 
   data.forEach((row) => {
     if (row.status === "new") stats.newLeads++;
     else if (row.status === "qualified") stats.qualifiedLeads++;
     else if (row.status === "converted") stats.convertedLeads++;
+
+    if (row.request_type === "DEMO") stats.demoRequests++;
+    else if (row.request_type === "ONBOARDING") stats.onboardingRequests++;
+    else if (row.request_type === "GENERAL") stats.generalEnquiries++;
   });
 
   return stats;
@@ -309,6 +337,8 @@ export async function createLeadActivity(
 ): Promise<HydratedActivity> {
   const supabase = supabaseAdmin();
 
+  const actualCreatedBy = createdBy === "00000000-0000-0000-0000-000000000000" ? null : (createdBy || null);
+
   const { data, error } = await supabase
     .from("lead_activities")
     .insert({
@@ -316,7 +346,7 @@ export async function createLeadActivity(
       activity_type: activityType,
       note: note || null,
       metadata: metadata || {},
-      created_by: createdBy || null,
+      created_by: actualCreatedBy,
     })
     .select("*")
     .single();
@@ -328,11 +358,11 @@ export async function createLeadActivity(
 
   // Hydrate the operator name
   let operatorName = "System";
-  if (createdBy) {
+  if (actualCreatedBy) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("full_name")
-      .eq("user_id", createdBy)
+      .eq("user_id", actualCreatedBy)
       .maybeSingle();
     operatorName = profile?.full_name || "SyncWA Operator";
   }
@@ -678,11 +708,17 @@ export async function convertLeadToCustomer(
 
 export interface CommercialMetrics {
   totalLeads: number;
+  pendingApprovalCustomers: number;
   trialCustomers: number;
-  expiringSoonCustomers: number;
   activeCustomers: number;
+  pausedCustomers: number;
   suspendedCustomers: number;
   cancelledCustomers: number;
+  blockedCustomers: number;
+  archivedCustomers: number;
+  onboardingInProgress: number;
+  onboardingCompleted: number;
+  expiringSoonCustomers: number;
   conversionRate: number;
 }
 
@@ -692,21 +728,31 @@ export interface CommercialMetrics {
 export async function getPlatformCommercialMetrics(): Promise<CommercialMetrics> {
   const supabase = supabaseAdmin();
 
-  // Query counts in parallel
+  // Query counts in parallel matching strict status state machines
   const [
     { count: leadsCount },
+    { count: pendingApprovalCount },
     { count: trialCount },
-    { count: expiringSoonCount },
     { count: activeCount },
+    { count: pausedCount },
     { count: suspendedCount },
     { count: cancelledCount },
+    { count: blockedCount },
+    { count: archivedCount },
+    { count: totalAccountsCount },
+    { count: completedOnboardingCount },
   ] = await Promise.all([
     supabase.from("platform_leads").select("id", { count: "exact", head: true }),
+    supabase.from("platform_customers").select("id", { count: "exact", head: true }).eq("status", "pending_approval"),
     supabase.from("platform_customers").select("id", { count: "exact", head: true }).eq("status", "trial"),
-    supabase.from("platform_customers").select("id", { count: "exact", head: true }).eq("status", "trial_expiring"),
     supabase.from("platform_customers").select("id", { count: "exact", head: true }).eq("status", "active"),
+    supabase.from("platform_customers").select("id", { count: "exact", head: true }).eq("status", "paused"),
     supabase.from("platform_customers").select("id", { count: "exact", head: true }).eq("status", "suspended"),
     supabase.from("platform_customers").select("id", { count: "exact", head: true }).eq("status", "cancelled"),
+    supabase.from("platform_customers").select("id", { count: "exact", head: true }).eq("status", "blocked"),
+    supabase.from("platform_customers").select("id", { count: "exact", head: true }).eq("status", "archived"),
+    supabase.from("accounts").select("id", { count: "exact", head: true }),
+    supabase.from("accounts").select("id", { count: "exact", head: true }).eq("onboarding_status->>completed", "true"),
   ]);
 
   const totalLeads = leadsCount || 0;
@@ -723,13 +769,91 @@ export async function getPlatformCommercialMetrics(): Promise<CommercialMetrics>
 
   return {
     totalLeads,
+    pendingApprovalCustomers: pendingApprovalCount || 0,
     trialCustomers: trialCount || 0,
-    expiringSoonCustomers: expiringSoonCount || 0,
     activeCustomers: activeCount || 0,
+    pausedCustomers: pausedCount || 0,
     suspendedCustomers: suspendedCount || 0,
     cancelledCustomers: cancelledCount || 0,
+    blockedCustomers: blockedCount || 0,
+    archivedCustomers: archivedCount || 0,
+    onboardingInProgress: (totalAccountsCount || 0) - (completedOnboardingCount || 0),
+    onboardingCompleted: completedOnboardingCount || 0,
+    expiringSoonCustomers: 0,
     conversionRate,
   };
+}
+
+/**
+ * Loads all workspace onboarding details, stages, and stats for the onboarding telemetry dashboard.
+ */
+export async function getPlatformOnboardingTelemetry(): Promise<any[]> {
+  const supabase = supabaseAdmin();
+
+  const { data: customers, error } = await supabase
+    .from("platform_customers")
+    .select("id, company_name, status, created_at, lead_id");
+
+  if (error || !customers) {
+    console.error("[repository] getPlatformOnboardingTelemetry failed:", error);
+    return [];
+  }
+
+  const telemetry = await Promise.all(
+    customers.map(async (cust) => {
+      const { data: account } = await supabase
+        .from("accounts")
+        .select("id, slug, trial_ends_at, onboarding_status")
+        .eq("customer_id", cust.id)
+        .maybeSingle();
+
+      if (!account) return null;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .eq("account_id", account.id)
+        .eq("account_role", "owner")
+        .maybeSingle();
+
+      const ownerUserId = profile?.user_id || "";
+
+      const { OnboardingService } = await import("@/lib/services/onboarding/service");
+      const { OnboardingProgressService } = await import("@/lib/services/onboarding/progress");
+
+      const onboardingService = new OnboardingService();
+      const stats = await onboardingService.evaluateAndLogMilestones(
+        cust.lead_id || "00000000-0000-0000-0000-000000000000",
+        account.id,
+        ownerUserId,
+        "00000000-0000-0000-0000-000000000000"
+      );
+
+      const detail = await getPlatformCustomerDetail(cust.id);
+      const metrics = detail?.metrics || { contactsCount: 0, conversationsCount: 0, dealsCount: 0 };
+
+      const activeStage = OnboardingProgressService.getActiveStage(
+        stats.checklist,
+        metrics.conversationsCount,
+        metrics.dealsCount
+      );
+
+      const lastActivityDate = detail?.activities?.[0]?.created_at || cust.created_at;
+
+      return {
+        customerId: cust.id,
+        companyName: cust.company_name,
+        commercialStatus: cust.status,
+        slug: account.slug,
+        trialEndsAt: account.trial_ends_at,
+        progressPercentage: stats.progressPercentage,
+        onboardingStage: activeStage,
+        lastActivityDate,
+      };
+    })
+  );
+
+  return telemetry.filter(Boolean);
 }
 
 export interface CommunicationMetrics {
@@ -793,7 +917,7 @@ export async function getPlatformCustomers(): Promise<any[]> {
         name,
         slug,
         status,
-        trial_starts_at,
+        trial_started_at,
         trial_ends_at
       )
     `)
@@ -869,6 +993,45 @@ export async function getPlatformCustomerDetail(customerId: string): Promise<any
     communications = commResult.data || [];
   }
 
+  // 6. Fetch other aggregate metrics from Customer CRM
+  let contactsCount = 0;
+  let conversationsCount = 0;
+  let dealsCount = 0;
+  let pipelinesCount = 0;
+  let broadcastsCount = 0;
+  let automationsCount = 0;
+  let storageUsageBytes = 0;
+  let whatsappStatus = "disconnected";
+
+  if (account) {
+    const [
+      { count: contacts },
+      { count: conversations },
+      { count: deals },
+      { count: pipelines },
+      { count: broadcasts },
+      { count: automations },
+      { data: whatsapp }
+    ] = await Promise.all([
+      supabase.from("contacts").select("id", { count: "exact", head: true }).eq("account_id", account.id),
+      supabase.from("conversations").select("id", { count: "exact", head: true }).eq("account_id", account.id),
+      supabase.from("deals").select("id", { count: "exact", head: true }).eq("account_id", account.id),
+      supabase.from("pipelines").select("id", { count: "exact", head: true }).eq("account_id", account.id),
+      supabase.from("broadcasts").select("id", { count: "exact", head: true }).eq("account_id", account.id),
+      supabase.from("automations").select("id", { count: "exact", head: true }).eq("account_id", account.id),
+      supabase.from("whatsapp_config").select("status").eq("account_id", account.id).maybeSingle(),
+    ]);
+
+    contactsCount = contacts || 0;
+    conversationsCount = conversations || 0;
+    dealsCount = deals || 0;
+    pipelinesCount = pipelines || 0;
+    broadcastsCount = broadcasts || 0;
+    automationsCount = automations || 0;
+    whatsappStatus = whatsapp?.status || "disconnected";
+    storageUsageBytes = (contactsCount * 12 + conversationsCount * 8 + dealsCount * 25) * 1024;
+  }
+
   return {
     customer,
     account,
@@ -876,6 +1039,177 @@ export async function getPlatformCustomerDetail(customerId: string): Promise<any
     membersCount,
     activities,
     communications,
+    metrics: {
+      contactsCount,
+      conversationsCount,
+      dealsCount,
+      pipelinesCount,
+      broadcastsCount,
+      automationsCount,
+      storageUsageBytes,
+      whatsappStatus,
+    }
+  };
+}
+
+/**
+ * Loads list of all provisioned workspaces with their dynamic operational health metrics.
+ */
+export async function getPlatformWorkspaces(): Promise<any[]> {
+  const supabase = supabaseAdmin();
+
+  const { data: accounts, error } = await supabase
+    .from("accounts")
+    .select(`
+      id,
+      name,
+      slug,
+      status,
+      created_at,
+      customer_id,
+      platform_customers (
+        company_name,
+        status
+      )
+    `);
+
+  if (error || !accounts) {
+    console.error("[repository] getPlatformWorkspaces failed:", error);
+    return [];
+  }
+
+  const { WorkspaceHealthService } = await import("@/lib/services/workspace-health");
+
+  const workspaces = await Promise.all(
+    accounts.map(async (acc) => {
+      const customer = Array.isArray(acc.platform_customers) 
+        ? acc.platform_customers[0] 
+        : acc.platform_customers;
+
+      const health = await WorkspaceHealthService.evaluateWorkspaceHealth(acc.id);
+
+      const { count: membersCount } = await supabase
+        .from("profiles")
+        .select("user_id", { count: "exact", head: true })
+        .eq("account_id", acc.id);
+
+      const waStatus = health.subsystems.whatsapp.status === "connected" ? "Connected" : "Disconnected";
+      
+      const detail = acc.customer_id ? await getPlatformCustomerDetail(acc.customer_id) : null;
+      const lastActivity = detail?.activities?.[0]?.created_at || acc.created_at;
+
+      return {
+        id: acc.id,
+        name: acc.name,
+        slug: acc.slug || "",
+        customerCompanyName: customer?.company_name || "Unassigned",
+        customerId: acc.customer_id,
+        operationalStatus: health.overallStatus,
+        healthScore: health.score,
+        version: "v1.0.0",
+        whatsappStatus: waStatus,
+        membersCount: membersCount || 0,
+        lastActivityDate: lastActivity,
+        createdDate: acc.created_at,
+      };
+    })
+  );
+
+  return workspaces;
+}
+
+/**
+ * Loads complete dynamic operational dashboard telemetry payload for a single workspace.
+ */
+export async function getPlatformWorkspaceDetail(workspaceId: string): Promise<any> {
+  const supabase = supabaseAdmin();
+
+  const { data: account, error: accErr } = await supabase
+    .from("accounts")
+    .select(`
+      id,
+      name,
+      slug,
+      status,
+      created_at,
+      customer_id,
+      trial_started_at,
+      trial_ends_at,
+      daily_broadcast_limit,
+      platform_customers (
+        id,
+        company_name,
+        email,
+        phone,
+        status,
+        lead_id
+      )
+    `)
+    .eq("id", workspaceId)
+    .maybeSingle();
+
+  if (accErr || !account) {
+    console.error("[repository] getPlatformWorkspaceDetail failed:", accErr);
+    return null;
+  }
+
+  const customer = Array.isArray(account.platform_customers) 
+    ? account.platform_customers[0] 
+    : account.platform_customers;
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("user_id, full_name, email")
+    .eq("account_id", workspaceId)
+    .eq("account_role", "owner")
+    .maybeSingle();
+
+  const { WorkspaceHealthService } = await import("@/lib/services/workspace-health");
+  const health = await WorkspaceHealthService.evaluateWorkspaceHealth(workspaceId);
+
+  const detail = customer?.id ? await getPlatformCustomerDetail(customer.id) : null;
+  const metrics = detail?.metrics || {
+    contactsCount: 0,
+    conversationsCount: 0,
+    dealsCount: 0,
+    pipelinesCount: 0,
+    broadcastsCount: 0,
+    automationsCount: 0,
+    storageUsageBytes: 0,
+  };
+
+  const activities = detail?.activities || [];
+
+  return {
+    workspace: {
+      id: account.id,
+      name: account.name,
+      slug: account.slug || "",
+      status: account.status,
+      trialStartedAt: account.trial_started_at,
+      trialEndsAt: account.trial_ends_at,
+      dailyBroadcastLimit: account.daily_broadcast_limit,
+      created_at: account.created_at,
+      version: "v1.0.0",
+      environment: process.env.NODE_ENV || "development",
+      customer_id: account.customer_id,
+    },
+    owner: {
+      companyName: customer?.company_name || "Unassigned",
+      ownerName: profile?.full_name || "Unassigned Owner",
+      ownerEmail: profile?.email || customer?.email || "Unspecified",
+      createdDate: account.created_at,
+    },
+    health: {
+      score: health.score,
+      overallStatus: health.overallStatus,
+      subsystems: health.subsystems,
+    },
+    metrics: {
+      ...metrics,
+      membersCount: detail?.membersCount || 0,
+    },
+    activities,
   };
 }
 

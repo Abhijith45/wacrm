@@ -57,6 +57,23 @@ export function ContactCard({ lead }: CardProps) {
 }
 
 export function CompanyCard({ lead }: CardProps) {
+  const getRequestTypeVariant = (requestType: string) => {
+    switch (requestType) {
+      case "DEMO":
+        return "info" as const;
+      case "ONBOARDING":
+        return "success" as const;
+      case "GENERAL":
+        return "neutral" as const;
+      case "PARTNERSHIP":
+        return "warning" as const;
+      case "TECHNICAL":
+        return "destructive" as const;
+      default:
+        return "neutral" as const;
+    }
+  };
+
   return (
     <SectionCard title="Company Details" subtitle="Client organization parameters and interest tags.">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-semibold select-none">
@@ -76,7 +93,17 @@ export function CompanyCard({ lead }: CardProps) {
           </span>
         </div>
 
-        <div className="space-y-1 sm:col-span-2">
+        <div className="space-y-1">
+          <span className="text-[10px] text-muted-foreground uppercase font-bold block">Request Type</span>
+          <div className="pt-0.5">
+            <StatusBadge
+              label={lead.request_type ? lead.request_type.toLowerCase() : "general"}
+              variant={getRequestTypeVariant(lead.request_type || "GENERAL")}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1">
           <span className="text-[10px] text-muted-foreground uppercase font-bold block">Interest / Topic Area</span>
           <span className="text-foreground flex items-center space-x-1.5">
             <Info className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
