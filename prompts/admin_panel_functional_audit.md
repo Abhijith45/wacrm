@@ -286,8 +286,7 @@ flowchart TD
 *   **Steps to reproduce**:
     1. Navigate to the cockpit page of a customer created without an associated lead (meaning `customer.lead_id` is null).
     2. Perform a commercial action (e.g., extend trial or suspend).
-*   **Expected behavior**: The app executes the action successfully using the customer's ID.
-*   **Actual behavior**: The application sends a POST request to `/api/leads/null/commercial`, which fails with a 404 error.
+    3. The application sends a POST request to `/api/leads/null/commercial`, which fails with a 404 error.
 *   **Severity**: **Medium**
 *   **Recommended fix**: Modify the API route to use the customer ID for updates, or add a safety fallback in the frontend code.
 
