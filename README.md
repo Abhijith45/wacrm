@@ -5,10 +5,6 @@
 > Manage shared inboxes, visual conversation flows, sales pipelines, broadcast campaigns, AI-assisted customer support, and SaaS operator workflows — all in one unified codebase with complete data ownership.
 
 <p align="center">
-  <img src="./.github/assets/hostinger-deploy.png" alt="Deploy SyncWA to Hostinger" width="900">
-</p>
-
-<p align="center">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-violet.svg" alt="License: MIT"></a>
   <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs" alt="Next.js 16"></a>
   <a href="https://react.dev"><img src="https://img.shields.io/badge/React-19-blue?logo=react" alt="React 19"></a>
